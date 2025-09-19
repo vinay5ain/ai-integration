@@ -51,6 +51,10 @@ def infer_moods_cached(text, top_k=2):
     except Exception:
         raise RuntimeError(f"Invalid JSON response from HF: {response.text}")
 
+    # 🔹 Handle nested list case ([[...]])
+    if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
+        result = result[0]
+
     if isinstance(result, list) and all(isinstance(r, dict) for r in result):
         # sort emotions by score
         sorted_res = sorted(result, key=lambda x: x["score"], reverse=True)
@@ -58,7 +62,8 @@ def infer_moods_cached(text, top_k=2):
         moods = [(r["label"].lower(), float(r["score"])) for r in top_res]
         return moods
 
-    raise RuntimeError(f"Unexpected HF response format: {result}")
+    # 🔹 Fallback: if API returns unexpected format
+    return [("neutral", 1.0)]
 
 # -----------------------------
 # API route to suggest foods
@@ -87,6 +92,10 @@ def suggest():
         all_tastes.extend(tastes)
         for t in tastes:
             all_foods.extend(taste_to_food.get(t, []))
+
+    # 🔹 Ensure fallback foods if none found
+    if not all_foods:
+        all_foods = taste_to_food.get("comfort", ["pizza", "burger", "pasta"])
 
     unique_foods = list(dict.fromkeys(all_foods))[:6]  # deduplicate & limit
 
