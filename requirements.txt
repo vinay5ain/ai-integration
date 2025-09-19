@@ -1,5 +1,5 @@
 flask
 flask-cors
-torch
 transformers
+torch==2.8.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 gunicorn
