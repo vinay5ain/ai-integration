@@ -1,0 +1,21 @@
+{
+  "mood_to_taste": {
+    "joy": ["sweet","savory"],
+    "sadness": ["sweet","comfort"],
+    "anger": ["spicy","crunchy"],
+    "fear": ["comfort"],
+    "neutral": ["savory"],
+    "surprise": ["tangy","novel"],
+    "disgust": ["refreshing"]
+  },
+  "taste_to_food": {
+    "sweet": ["Shagun Rasmalai", "Gulab Jamun", "Ice Cream"],
+    "savory": ["Biryani", "Pasta", "Paneer Butter Masala"],
+    "spicy": ["Masala Momos", "Paneer Tikka", "Spicy Chaat"],
+    "comfort": ["Dal Chawal", "Kadhi Chawal", "Soup"],
+    "refreshing": ["Shikanji", "Cold Coffee", "Mint Lemonade"],
+    "tangy": ["Pani Puri", "Aloo Chaat"],
+    "crunchy": ["Samosa", "Kurkure-style Snack"],
+    "novel": ["Fusion Pizza", "Mocktail"]
+  }
+}
