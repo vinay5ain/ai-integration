@@ -26,8 +26,8 @@ with open(FOOD_JSON_PATH, "r", encoding="utf-8") as f:
 # -----------------------------
 # Hugging Face API config
 # -----------------------------
-HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
-HF_API_KEY = os.getenv("HF_API_KEY")  # set this in Render dashboard
+HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-roberta-large"
+HF_API_KEY = os.getenv("HF_API_KEY")  # set this in Render or your environment
 if not HF_API_KEY:
     raise RuntimeError("HF_API_KEY not set. Add it as an environment variable.")
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
@@ -55,11 +55,15 @@ def infer_mood_cached(text):
     except Exception:
         raise RuntimeError(f"Invalid JSON response from HF: {response.text}")
 
-    # Handle nested list output
-    if isinstance(result, list) and isinstance(result[0], list):
-        res = result[0][0]
+    # Parse result - handle multiple possible formats
+    if isinstance(result, dict) and "error" in result:
+        raise RuntimeError(f"Hugging Face model error: {result['error']}")
+
+    if isinstance(result, list):
+        # typical HF output: [{"label": "...", "score": ...}]
+        res = result[0] if len(result) > 0 else {"label": "neutral", "score": 0.0}
     else:
-        res = result[0]
+        res = {"label": "neutral", "score": 0.0}
 
     label = res.get("label", "neutral").lower()
     score = float(res.get("score", 0.0))
