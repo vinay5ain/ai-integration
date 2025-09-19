@@ -24,7 +24,7 @@ with open(FOOD_JSON_PATH, "r", encoding="utf-8") as f:
     FOOD_DB = json.load(f)
 
 # -----------------------------
-# Hugging Face API config (Better Model)
+# Hugging Face API config
 # -----------------------------
 HF_API_URL = "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
 HF_API_KEY = os.getenv("HF_API_KEY")  # must be set in environment
@@ -56,7 +56,6 @@ def infer_moods_cached(text, top_k=2):
         result = result[0]
 
     if isinstance(result, list) and all(isinstance(r, dict) for r in result):
-        # sort emotions by score
         sorted_res = sorted(result, key=lambda x: x["score"], reverse=True)
         top_res = sorted_res[:top_k]
         moods = [(r["label"].lower(), float(r["score"])) for r in top_res]
@@ -86,8 +85,14 @@ def suggest():
 
     all_tastes = []
     all_foods = []
+    valid_moods = []
 
     for label, score in moods:
+        if label not in mood_to_taste:
+            label = "neutral"
+
+        valid_moods.append({"label": label, "confidence": round(score, 3)})
+
         tastes = mood_to_taste.get(label, ["comfort"])
         all_tastes.extend(tastes)
         for t in tastes:
@@ -99,9 +104,13 @@ def suggest():
 
     unique_foods = list(dict.fromkeys(all_foods))[:6]  # deduplicate & limit
 
+    # 🔹 Ensure fallback moods if nothing valid
+    if not valid_moods:
+        valid_moods = [{"label": "neutral", "confidence": 1.0}]
+
     return jsonify({
-        "moods": [{"label": m[0], "confidence": round(m[1], 3)} for m in moods],
-        "tastes": list(dict.fromkeys(all_tastes)),
+        "moods": valid_moods,
+        "tastes": list(dict.fromkeys(all_tastes)) or ["comfort"],
         "foods": unique_foods
     })
 
