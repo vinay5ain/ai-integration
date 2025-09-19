@@ -1,222 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Mood Food App 🌙</title>
-<style>
-  /* Reset & base styling */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  body {
-    background: #121212;
-    color: #e0e0e0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-  }
-
-  .container {
-    background: #1e1e2f;
-    padding: 35px 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    max-width: 450px;
-    width: 100%;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-  }
-
-  h1 {
-    color: #ffcc00;
-    margin-bottom: 25px;
-    font-size: 1.9rem;
-  }
-
-  input[type="text"] {
-    width: 100%;
-    padding: 14px 12px;
-    border-radius: 12px;
-    border: 1px solid #444;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    background: #2a2a3d;
-    color: #fff;
-    transition: all 0.3s ease;
-  }
-
-  input[type="text"]::placeholder {
-    color: #aaa;
-  }
-
-  input[type="text"]:focus {
-    border-color: #ffcc00;
-    box-shadow: 0 0 8px rgba(255,204,0,0.4);
-    outline: none;
-  }
-
-  button {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #ffcc00, #ffaa00);
-    color: #1e1e2f;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  button:hover {
-    background: linear-gradient(90deg, #ffaa00, #ffcc00);
-    transform: scale(1.03);
-  }
-
-  .result-card {
-    margin-top: 25px;
-    background: #2a2a3d;
-    padding: 22px;
-    border-radius: 20px;
-    text-align: left;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    animation: fadeIn 0.5s ease forwards;
-  }
-
-  .result-card h3 {
-    margin-bottom: 15px;
-    font-size: 1.4rem;
-    color: #ffcc00;
-  }
-
-  .mood-badge {
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
-    margin-right: 8px;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #fff;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-  }
-
-  .mood-badge:hover {
-    transform: scale(1.1);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.6);
-  }
-
-  .foods-list {
-    list-style: disc;
-    padding-left: 22px;
-    margin-top: 12px;
-  }
-
-  .foods-list li {
-    background: #3a3a50;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  }
-
-  /* Mood colors (neonish) */
-  .joy { background: #ffea00; color: #1e1e2f; }
-  .sadness { background: #3498db; }
-  .anger { background: #e74c3c; }
-  .fear { background: #9b59b6; }
-  .neutral { background: #7f8c8d; }
-  .surprise { background: #f39c12; }
-  .disgust { background: #2ecc71; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media(max-width: 500px) {
-    .container {
-      padding: 30px 20px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Mood-Based Food Suggestion</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f2f9ff;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    h1 { font-size: 1.6rem; }
-    input[type="text"] { padding: 12px; }
-    button { padding: 10px 20px; }
-  }
-</style>
+
+    h1 {
+      color: #0077cc;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      outline: none;
+      resize: none;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #0077cc;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 12px;
+      background: #e6f3ff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .result h2 {
+      margin-top: 0;
+      color: #005fa3;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
+  <h1>🍲 AI Mood-Based Food Suggestion</h1>
 
-<div class="container">
-  <h1>AI Mood Food App 🌙</h1>
-  <input type="text" id="userText" placeholder="How are you feeling?">
-  <button onclick="getSuggestion()">Get Suggestions</button>
-  <div id="result"></div>
-</div>
+  <textarea id="userInput" placeholder="Tell me how you feel..."></textarea>
+  <br>
+  <button onclick="getSuggestion()">Get Suggestion</button>
 
-<script>
-async function getSuggestion() {
-  const text = document.getElementById("userText").value.trim();
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = "";
+  <div class="result" id="resultBox" style="display:none;">
+    <h2>Mood: <span id="mood">...</span></h2>
+    <p><strong>Recommended Dishes:</strong></p>
+    <ul id="dishes"></ul>
+  </div>
 
-  if (!text) return alert("Please enter your mood!");
+  <script>
+    async function getSuggestion() {
+      const text = document.getElementById("userInput").value.trim();
+      const resultBox = document.getElementById("resultBox");
+      const moodSpan = document.getElementById("mood");
+      const dishesList = document.getElementById("dishes");
 
-  try {
-    const res = await fetch("/api/suggest", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ text })
-    });
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
+      if (!text) {
+        alert("Please write something about your mood!");
+        return;
+      }
 
-    // Result card
-    const card = document.createElement("div");
-    card.className = "result-card";
+      try {
+        const res = await fetch("/api/suggest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
 
-    const moodLabel = document.createElement("h3");
-    moodLabel.textContent = `Mood: ${data.mood}`;
-    card.appendChild(moodLabel);
+        if (!res.ok) {
+          throw new Error("Server error: " + res.status);
+        }
 
-    // Tastes badges
-    data.tastes.forEach(t => {
-      const badge = document.createElement("span");
-      badge.className = `mood-badge ${t}`;
-      badge.textContent = t;
-      card.appendChild(badge);
-    });
+        const data = await res.json();
 
-    // Foods
-    if (data.foods.length) {
-      const foodList = document.createElement("ul");
-      foodList.className = "foods-list";
-      data.foods.forEach(f => {
-        const li = document.createElement("li");
-        li.textContent = f;
-        foodList.appendChild(li);
-      });
-      card.appendChild(foodList);
+        // Fix: handle different response shapes
+        const mood = data.mood || (data.moods && data.moods[0]) || "Unknown";
+        moodSpan.textContent = mood;
+
+        dishesList.innerHTML = "";
+        (data.foods || []).forEach(dish => {
+          const li = document.createElement("li");
+          li.textContent = dish;
+          dishesList.appendChild(li);
+        });
+
+        resultBox.style.display = "block";
+      } catch (err) {
+        console.error("Error:", err);
+        alert("Something went wrong! Check backend logs.");
+      }
     }
-
-    resultDiv.appendChild(card);
-
-  } catch (err) {
-    resultDiv.textContent = "Error: " + err;
-  }
-}
-</script>
-
+  </script>
 </body>
 </html>
