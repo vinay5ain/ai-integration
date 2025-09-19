@@ -1,15 +1,15 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from transformers import pipeline
 import json
 import os
+import requests
 from functools import lru_cache
 
 # -----------------------------
 # Initialize app
 # -----------------------------
-app = Flask(__name__, static_folder="frontend")  # optional: serve frontend
-CORS(app)  # allow frontend to call backend
+app = Flask(__name__, static_folder="frontend")  # serve frontend
+CORS(app)
 
 # -----------------------------
 # Load food database
@@ -24,23 +24,25 @@ with open(FOOD_JSON_PATH, "r", encoding="utf-8") as f:
     FOOD_DB = json.load(f)
 
 # -----------------------------
-# Load Hugging Face emotion model
+# Hugging Face API config
 # -----------------------------
-print("Loading emotion model (this may take a moment)...")
-emotion_classifier = pipeline(
-    "text-classification",
-    model="j-hartmann/emotion-english-distilroberta-base",
-    top_k=1
-)
-print("Model loaded.")
+HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
+HF_API_KEY = os.getenv("HF_API_KEY")  # set this in Render dashboard
+headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 # -----------------------------
 # Cached mood inference
 # -----------------------------
 @lru_cache(maxsize=1024)
 def infer_mood_cached(text):
-    result = emotion_classifier(text, top_k=1)
-    # Handle possible nested list
+    payload = {"inputs": text}
+    response = requests.post(HF_API_URL, headers=headers, json=payload)
+
+    if response.status_code != 200:
+        raise RuntimeError(f"Hugging Face API error: {response.text}")
+
+    result = response.json()
+    # Handle nested list output
     if isinstance(result, list) and isinstance(result[0], list):
         res = result[0][0]
     else:
@@ -90,7 +92,7 @@ def ping():
     return jsonify({"status": "ok"})
 
 # -----------------------------
-# Optional: serve frontend
+# Serve frontend
 # -----------------------------
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
