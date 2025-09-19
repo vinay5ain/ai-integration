@@ -24,10 +24,10 @@ with open(FOOD_JSON_PATH, "r", encoding="utf-8") as f:
     FOOD_DB = json.load(f)
 
 # -----------------------------
-# Hugging Face API config
+# Hugging Face API config (Better Model)
 # -----------------------------
-HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-roberta-large"
-HF_API_KEY = os.getenv("HF_API_KEY")  # set this in Render or your environment
+HF_API_URL = "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
+HF_API_KEY = os.getenv("HF_API_KEY")  # must be set in environment
 if not HF_API_KEY:
     raise RuntimeError("HF_API_KEY not set. Add it as an environment variable.")
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
@@ -36,16 +36,12 @@ headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 # Cached mood inference
 # -----------------------------
 @lru_cache(maxsize=1024)
-def infer_mood_cached(text):
+def infer_moods_cached(text, top_k=2):
     payload = {"inputs": text}
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=20)
     except Exception as e:
         raise RuntimeError(f"Hugging Face request failed: {str(e)}")
-
-    # Log status and response snippet for debugging
-    print("HF status:", response.status_code)
-    print("HF response:", response.text[:500])  # first 500 chars
 
     if response.status_code != 200:
         raise RuntimeError(f"Hugging Face API error: {response.text}")
@@ -55,19 +51,14 @@ def infer_mood_cached(text):
     except Exception:
         raise RuntimeError(f"Invalid JSON response from HF: {response.text}")
 
-    # Parse result - handle multiple possible formats
-    if isinstance(result, dict) and "error" in result:
-        raise RuntimeError(f"Hugging Face model error: {result['error']}")
+    if isinstance(result, list) and all(isinstance(r, dict) for r in result):
+        # sort emotions by score
+        sorted_res = sorted(result, key=lambda x: x["score"], reverse=True)
+        top_res = sorted_res[:top_k]
+        moods = [(r["label"].lower(), float(r["score"])) for r in top_res]
+        return moods
 
-    if isinstance(result, list):
-        # typical HF output: [{"label": "...", "score": ...}]
-        res = result[0] if len(result) > 0 else {"label": "neutral", "score": 0.0}
-    else:
-        res = {"label": "neutral", "score": 0.0}
-
-    label = res.get("label", "neutral").lower()
-    score = float(res.get("score", 0.0))
-    return label, score
+    raise RuntimeError(f"Unexpected HF response format: {result}")
 
 # -----------------------------
 # API route to suggest foods
@@ -80,26 +71,28 @@ def suggest():
         return jsonify({"error": "text required"}), 400
 
     try:
-        label, confidence = infer_mood_cached(text)
+        moods = infer_moods_cached(text, top_k=2)  # get top 2 moods
     except Exception as e:
         print("Error in mood inference:", str(e))
         return jsonify({"error": "model_error", "details": str(e)}), 500
 
-    # Map mood -> tastes -> foods
     mood_to_taste = FOOD_DB.get("mood_to_taste", {})
-    tastes = mood_to_taste.get(label, ["comfort"])
-
     taste_to_food = FOOD_DB.get("taste_to_food", {})
-    foods = []
-    for t in tastes:
-        foods.extend(taste_to_food.get(t, []))
 
-    unique_foods = list(dict.fromkeys(foods))[:6]  # deduplicate & limit
+    all_tastes = []
+    all_foods = []
+
+    for label, score in moods:
+        tastes = mood_to_taste.get(label, ["comfort"])
+        all_tastes.extend(tastes)
+        for t in tastes:
+            all_foods.extend(taste_to_food.get(t, []))
+
+    unique_foods = list(dict.fromkeys(all_foods))[:6]  # deduplicate & limit
 
     return jsonify({
-        "mood": label,
-        "confidence": round(confidence, 3),
-        "tastes": tastes,
+        "moods": [{"label": m[0], "confidence": round(m[1], 3)} for m in moods],
+        "tastes": list(dict.fromkeys(all_tastes)),
         "foods": unique_foods
     })
 
