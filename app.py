@@ -28,6 +28,8 @@ with open(FOOD_JSON_PATH, "r", encoding="utf-8") as f:
 # -----------------------------
 HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
 HF_API_KEY = os.getenv("HF_API_KEY")  # set this in Render dashboard
+if not HF_API_KEY:
+    raise RuntimeError("HF_API_KEY not set. Add it as an environment variable.")
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 # -----------------------------
@@ -36,17 +38,29 @@ headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 @lru_cache(maxsize=1024)
 def infer_mood_cached(text):
     payload = {"inputs": text}
-    response = requests.post(HF_API_URL, headers=headers, json=payload)
+    try:
+        response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=20)
+    except Exception as e:
+        raise RuntimeError(f"Hugging Face request failed: {str(e)}")
+
+    # Log status and response snippet for debugging
+    print("HF status:", response.status_code)
+    print("HF response:", response.text[:500])  # first 500 chars
 
     if response.status_code != 200:
         raise RuntimeError(f"Hugging Face API error: {response.text}")
 
-    result = response.json()
+    try:
+        result = response.json()
+    except Exception:
+        raise RuntimeError(f"Invalid JSON response from HF: {response.text}")
+
     # Handle nested list output
     if isinstance(result, list) and isinstance(result[0], list):
         res = result[0][0]
     else:
         res = result[0]
+
     label = res.get("label", "neutral").lower()
     score = float(res.get("score", 0.0))
     return label, score
@@ -64,6 +78,7 @@ def suggest():
     try:
         label, confidence = infer_mood_cached(text)
     except Exception as e:
+        print("Error in mood inference:", str(e))
         return jsonify({"error": "model_error", "details": str(e)}), 500
 
     # Map mood -> tastes -> foods
