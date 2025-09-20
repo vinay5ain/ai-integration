@@ -9,50 +9,8 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #333; overflow-x: hidden; }
-    a { text-decoration: none; color: inherit; }
-
-    /* Header */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #4a90e2; color: white; position: sticky; top: 0; z-index: 100; }
-    header .logo { font-family: 'Forum', cursive; font-size: 1.8rem; }
-    header nav { display: flex; gap: 1.5rem; }
-    header nav a { color: white; font-weight: 500; transition: 0.3s; }
-    header nav a:hover { text-decoration: underline; }
-
-    /* Hero */
-    .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 80vh; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./assets/images/hero-slider-1.jpg') center/cover no-repeat; color: white; }
-    .hero h1 { font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.5); }
-    .hero p { font-size: 1.2rem; margin-bottom: 2rem; }
-    .hero button { padding: 0.8rem 1.5rem; background: #50c9c3; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
-    .hero button:hover { background: #3aa6a0; transform: translateY(-2px); }
-
-    /* AI Mood Section */
-    .ai-section { padding: 4rem 2rem; text-align: center; background: #fff; border-radius: 20px; max-width: 1200px; margin: 2rem auto; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-    .ai-section h2 { font-size: 2rem; margin-bottom: 1rem; color: #4a90e2; }
-    .input-group { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-    .input-group input[type=text] { padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid #ccc; flex: 1; min-width: 200px; transition: 0.3s; }
-    .input-group input[type=text]:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 10px rgba(74,144,226,0.3); }
-    .input-group button { padding: 0.7rem 1.5rem; border: none; border-radius: 8px; background: #4a90e2; color: white; font-weight: 500; cursor: pointer; transition: 0.3s; }
-    .input-group button:hover { background: #357ab8; }
-
-    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .card { background: #f0f4f8; border-radius: 12px; padding: 1rem; text-align: center; transition: 0.3s; cursor: pointer; }
-    .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 0.5rem; }
-    .card h3 { font-size: 1.2rem; margin-bottom: 0.3rem; color: #4a90e2; }
-    .card p { font-size: 0.95rem; color: #555; margin-bottom: 0.5rem; }
-    .card button { padding: 0.5rem 1rem; border: none; border-radius: 5px; background: #50c9c3; color: white; cursor: pointer; }
-    .card button:hover { background: #3aa6a0; }
-
-    footer { background: #4a90e2; color: white; padding: 2rem; text-align: center; }
-    footer a { color: white; text-decoration: underline; }
-
-    @media (max-width: 768px) {
-      .input-group { flex-direction: column; }
-      .input-group input[type=text], .input-group button { width: 100%; }
-    }
-  </style>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -60,8 +18,8 @@
   <header>
     <div class="logo">FoodMood AI</div>
     <nav>
-      <a href="#hero">Home</a>
-      <a href="#ai-section">Mood AI</a>
+      <a href="index.html">Home</a>
+      <a href="mood.html">Mood AI</a>
       <a href="cart.html">Cart</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -71,17 +29,7 @@
   <section class="hero" id="hero">
     <h1>Discover Foods Matching Your Mood</h1>
     <p>Type your mood, get personalized food suggestions instantly</p>
-    <button onclick="document.getElementById('moodText').focus()">Start</button>
-  </section>
-
-  <!-- AI Mood Section -->
-  <section class="ai-section" id="ai-section">
-    <h2>AI Mood-based Food Suggestions</h2>
-    <div class="input-group">
-      <input type="text" id="moodText" placeholder="Describe your mood...">
-      <button onclick="suggestFood()">Suggest Food</button>
-    </div>
-    <div id="suggested" class="cards"></div>
+    <a href="mood.html"><button>Try Mood AI</button></a>
   </section>
 
   <!-- Footer -->
@@ -89,48 +37,6 @@
     <p>&copy; 2025 FoodMood AI. Crafted by You.</p>
     <p>Contact: <a href="mailto:support@foodmoodai.com">support@foodmoodai.com</a></p>
   </footer>
-
-  <!-- JS for backend API -->
-  <script>
-    async function suggestFood() {
-      const text = document.getElementById("moodText").value.trim();
-      if (!text) return alert("Please describe your mood.");
-
-      const response = await fetch("/api/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-
-      if (!response.ok) return alert("Error fetching suggestions");
-
-      const data = await response.json();
-      const cardsContainer = document.getElementById("suggested");
-      cardsContainer.innerHTML = "";
-
-      data.dishes.forEach(dish => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${dish.image}" alt="${dish.name}">
-          <h3>${dish.name}</h3>
-          <p>${dish.description}</p>
-          <button onclick="addToCart(${dish.id})">Add to Cart</button>
-        `;
-        cardsContainer.appendChild(card);
-      });
-    }
-
-    async function addToCart(dishId) {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: dishId })
-      });
-      const data = await res.json();
-      alert(data.message || "Added to cart");
-    }
-  </script>
 
 </body>
 </html>

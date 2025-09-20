@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mood AI - Food Suggestions</title>
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">FoodMood AI</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="mood.html">Mood AI</a>
+      <a href="cart.html">Cart</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- AI Mood Section -->
+  <section class="ai-section">
+    <h2>AI Mood-based Food Suggestions</h2>
+    <div class="input-group">
+      <input type="text" id="moodText" placeholder="Describe your mood...">
+      <button onclick="suggestFood()">Suggest Food</button>
+    </div>
+    <div id="suggested" class="cards"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <p>&copy; 2025 FoodMood AI. Crafted by You.</p>
+    <p>Contact: <a href="mailto:support@foodmoodai.com">support@foodmoodai.com</a></p>
+  </footer>
+
+  <!-- JS for backend API -->
+  <script>
+    async function suggestFood() {
+      const text = document.getElementById("moodText").value.trim();
+      if (!text) return alert("Please describe your mood.");
+
+      const response = await fetch("/api/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+
+      if (!response.ok) return alert("Error fetching suggestions");
+
+      const data = await response.json();
+      const cardsContainer = document.getElementById("suggested");
+      cardsContainer.innerHTML = "";
+
+      data.dishes.forEach(dish => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${dish.image}" alt="${dish.name}">
+          <h3>${dish.name}</h3>
+          <p>${dish.description}</p>
+          <button onclick="addToCart(${dish.id})">Add to Cart</button>
+        `;
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    async function addToCart(dishId) {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: dishId })
+      });
+      const data = await res.json();
+      alert(data.message || "Added to cart");
+    }
+  </script>
+
+</body>
+</html>
