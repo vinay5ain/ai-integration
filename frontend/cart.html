@@ -72,6 +72,10 @@
 
     const amount = cartItems.reduce((sum, item) => sum + item.price, 0);
 
+    // Get Razorpay public key from backend
+    const keyRes = await fetch('/api/razorpay_key');
+    const { key } = await keyRes.json();
+
     // Create Razorpay order
     const orderRes = await fetch('/api/create_order', {
       method: 'POST',
@@ -81,7 +85,7 @@
     const orderData = await orderRes.json();
 
     const options = {
-      key: '<YOUR_RAZORPAY_KEY_ID>',
+      key: key, // dynamically fetched key
       amount: orderData.amount,
       currency: orderData.currency,
       name: "FoodMood AI",
@@ -89,12 +93,18 @@
       order_id: orderData.id,
       handler: async function(response){
         // Verify payment
-        await fetch('/api/verify_payment', {
+        const verifyRes = await fetch('/api/verify_payment', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(response)
         });
-        alert('Payment Successful!');
+        const verifyData = await verifyRes.json();
+
+        if(verifyData.status === 'success'){
+          alert('Payment Successful!');
+        } else {
+          alert('Payment Failed!');
+        }
         fetchCart();
       },
       theme: { color: "#4a90e2" }
