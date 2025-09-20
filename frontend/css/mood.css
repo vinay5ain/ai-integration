@@ -175,7 +175,7 @@ body {
   0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ffdd57; }
   100% { text-shadow: 0 0 15px #ffdd57, 0 0 25px #ffdd57; }
 }
-/* ---------- Horizontal Cart with All Cards Visible ---------- */
+
 /* ---------- Horizontal Cart with All Cards Full Width ---------- */
 .cards {
   display: flex;
