@@ -6,7 +6,7 @@
     "annoyance": ["crunchy", "spicy"],
     "approval": ["savory"],
     "caring": ["comfort"],
-    "confusion": ["mild", "neutral"],
+    "confusion": ["neutral"],
     "curiosity": ["exotic"],
     "desire": ["sweet"],
     "disappointment": ["comfort"],
@@ -19,7 +19,7 @@
     "grief": ["comfort"],
     "joy": ["sweet", "savory"],
     "love": ["sweet", "chocolate"],
-    "nervousness": ["mild"],
+    "nervousness": ["neutral"],
     "neutral": ["neutral", "comfort"],
     "optimism": ["fresh"],
     "pride": ["rich"],
@@ -45,6 +45,7 @@
     "warm": ["Khichdi", "Ramen"],
     "fresh": ["Fruit Juice", "Green Salad"],
     "rich": ["Cheesecake", "Lasagna"],
-    "crispy": ["French Fries", "Fried Chicken"]
+    "crispy": ["French Fries", "Fried Chicken"],
+    "snack": ["Nachos", "Chips", "Cookies", "French Fries"]
   }
 }

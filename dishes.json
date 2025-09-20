@@ -1,0 +1,314 @@
+[
+  {
+    "id": 1,
+    "name": "Ice Cream",
+    "description": "Cold and creamy delight, perfect for sweet moods.",
+    "price": 120,
+    "tags": ["sweet", "dessert"],
+    "image": "https://source.unsplash.com/400x300/?icecream"
+  },
+  {
+    "id": 2,
+    "name": "Chocolate Cake",
+    "description": "Rich chocolate layered cake for indulgence.",
+    "price": 180,
+    "tags": ["sweet", "dessert"],
+    "image": "https://source.unsplash.com/400x300/?chocolate-cake"
+  },
+  {
+    "id": 3,
+    "name": "Donuts",
+    "description": "Soft fried donuts topped with glaze and sprinkles.",
+    "price": 100,
+    "tags": ["sweet", "snack"],
+    "image": "https://source.unsplash.com/400x300/?donuts"
+  },
+  {
+    "id": 4,
+    "name": "Cookies",
+    "description": "Crunchy chocolate chip cookies freshly baked.",
+    "price": 80,
+    "tags": ["sweet", "snack"],
+    "image": "https://source.unsplash.com/400x300/?cookies"
+  },
+  {
+    "id": 5,
+    "name": "Pizza",
+    "description": "Cheesy pizza with fresh toppings and crispy crust.",
+    "price": 250,
+    "tags": ["savory", "fastfood"],
+    "image": "https://source.unsplash.com/400x300/?pizza"
+  },
+  {
+    "id": 6,
+    "name": "Burger",
+    "description": "Juicy burger with lettuce, tomato, and cheese.",
+    "price": 150,
+    "tags": ["savory", "fastfood"],
+    "image": "https://source.unsplash.com/400x300/?burger"
+  },
+  {
+    "id": 7,
+    "name": "Sandwich",
+    "description": "Fresh sandwich filled with veggies and cheese.",
+    "price": 120,
+    "tags": ["savory", "snack"],
+    "image": "https://source.unsplash.com/400x300/?sandwich"
+  },
+  {
+    "id": 8,
+    "name": "Chili Paneer",
+    "description": "Spicy Indo-Chinese paneer tossed in chili sauce.",
+    "price": 200,
+    "tags": ["spicy", "veg"],
+    "image": "https://source.unsplash.com/400x300/?paneer"
+  },
+  {
+    "id": 9,
+    "name": "Tacos",
+    "description": "Crispy tacos filled with spicy fillings and sauces.",
+    "price": 220,
+    "tags": ["spicy", "mexican"],
+    "image": "https://source.unsplash.com/400x300/?tacos"
+  },
+  {
+    "id": 10,
+    "name": "Hot Wings",
+    "description": "Crispy chicken wings tossed in spicy sauce.",
+    "price": 210,
+    "tags": ["spicy", "crispy"],
+    "image": "https://source.unsplash.com/400x300/?chicken-wings"
+  },
+  {
+    "id": 11,
+    "name": "Pasta",
+    "description": "Creamy Italian pasta with rich sauce.",
+    "price": 190,
+    "tags": ["comfort", "italian"],
+    "image": "https://source.unsplash.com/400x300/?pasta"
+  },
+  {
+    "id": 12,
+    "name": "Mashed Potatoes",
+    "description": "Smooth and buttery mashed potatoes.",
+    "price": 130,
+    "tags": ["comfort", "side"],
+    "image": "https://source.unsplash.com/400x300/?mashed-potatoes"
+  },
+  {
+    "id": 13,
+    "name": "Soup",
+    "description": "Warm and comforting vegetable soup.",
+    "price": 100,
+    "tags": ["comfort", "light"],
+    "image": "https://source.unsplash.com/400x300/?soup"
+  },
+  {
+    "id": 14,
+    "name": "Salad",
+    "description": "Refreshing salad with fresh vegetables and dressing.",
+    "price": 130,
+    "tags": ["refreshing", "healthy"],
+    "image": "https://source.unsplash.com/400x300/?salad"
+  },
+  {
+    "id": 15,
+    "name": "Smoothie",
+    "description": "Fruit smoothie blended with milk and ice.",
+    "price": 140,
+    "tags": ["refreshing", "drink"],
+    "image": "https://source.unsplash.com/400x300/?smoothie"
+  },
+  {
+    "id": 16,
+    "name": "Fruit Bowl",
+    "description": "Bowl of fresh seasonal fruits.",
+    "price": 110,
+    "tags": ["refreshing", "healthy"],
+    "image": "https://source.unsplash.com/400x300/?fruits"
+  },
+  {
+    "id": 17,
+    "name": "Chips",
+    "description": "Crispy potato chips seasoned with salt.",
+    "price": 60,
+    "tags": ["crunchy", "snack"],
+    "image": "https://source.unsplash.com/400x300/?chips"
+  },
+  {
+    "id": 18,
+    "name": "Nachos",
+    "description": "Corn nachos with cheese and jalapeños.",
+    "price": 140,
+    "tags": ["crunchy", "mexican"],
+    "image": "https://source.unsplash.com/400x300/?nachos"
+  },
+  {
+    "id": 19,
+    "name": "Sushi",
+    "description": "Traditional Japanese sushi with rice and fish.",
+    "price": 300,
+    "tags": ["exotic", "japanese"],
+    "image": "https://source.unsplash.com/400x300/?sushi"
+  },
+  {
+    "id": 20,
+    "name": "Falafel",
+    "description": "Deep-fried falafel balls served with pita.",
+    "price": 180,
+    "tags": ["exotic", "mediterranean"],
+    "image": "https://source.unsplash.com/400x300/?falafel"
+  },
+  {
+    "id": 21,
+    "name": "Rice",
+    "description": "Steamed white rice, perfect as a base dish.",
+    "price": 90,
+    "tags": ["neutral", "base"],
+    "image": "https://source.unsplash.com/400x300/?rice"
+  },
+  {
+    "id": 22,
+    "name": "Bread",
+    "description": "Freshly baked bread loaf.",
+    "price": 70,
+    "tags": ["neutral", "base"],
+    "image": "https://source.unsplash.com/400x300/?bread"
+  },
+  {
+    "id": 23,
+    "name": "Idli",
+    "description": "Soft South Indian steamed rice cakes.",
+    "price": 100,
+    "tags": ["neutral", "indian"],
+    "image": "https://source.unsplash.com/400x300/?idli"
+  },
+  {
+    "id": 24,
+    "name": "Dark Chocolate",
+    "description": "Bitter-sweet dark chocolate bar.",
+    "price": 150,
+    "tags": ["bitter", "sweet"],
+    "image": "https://source.unsplash.com/400x300/?dark-chocolate"
+  },
+  {
+    "id": 25,
+    "name": "Coffee",
+    "description": "Hot brewed coffee to energize your day.",
+    "price": 120,
+    "tags": ["bitter", "drink"],
+    "image": "https://source.unsplash.com/400x300/?coffee"
+  },
+  {
+    "id": 26,
+    "name": "Lemonade",
+    "description": "Chilled lemonade with tangy flavor.",
+    "price": 80,
+    "tags": ["sour", "drink"],
+    "image": "https://source.unsplash.com/400x300/?lemonade"
+  },
+  {
+    "id": 27,
+    "name": "Pickles",
+    "description": "Tangy and sour pickles for flavor.",
+    "price": 60,
+    "tags": ["sour", "side"],
+    "image": "https://source.unsplash.com/400x300/?pickles"
+  },
+  {
+    "id": 28,
+    "name": "Steamed Veggies",
+    "description": "Lightly steamed seasonal vegetables.",
+    "price": 100,
+    "tags": ["light", "healthy"],
+    "image": "https://source.unsplash.com/400x300/?vegetables"
+  },
+  {
+    "id": 29,
+    "name": "Dhokla",
+    "description": "Soft and spongy Gujarati snack.",
+    "price": 90,
+    "tags": ["light", "indian"],
+    "image": "https://source.unsplash.com/400x300/?dhokla"
+  },
+  {
+    "id": 30,
+    "name": "Brownie",
+    "description": "Chocolate brownie with gooey center.",
+    "price": 160,
+    "tags": ["chocolate", "dessert"],
+    "image": "https://source.unsplash.com/400x300/?brownie"
+  },
+  {
+    "id": 31,
+    "name": "Hot Chocolate",
+    "description": "Warm hot chocolate topped with cream.",
+    "price": 150,
+    "tags": ["chocolate", "drink"],
+    "image": "https://source.unsplash.com/400x300/?hot-chocolate"
+  },
+  {
+    "id": 32,
+    "name": "Khichdi",
+    "description": "Comforting Indian rice-lentil porridge.",
+    "price": 120,
+    "tags": ["warm", "indian"],
+    "image": "https://source.unsplash.com/400x300/?khichdi"
+  },
+  {
+    "id": 33,
+    "name": "Ramen",
+    "description": "Japanese noodle soup served hot.",
+    "price": 220,
+    "tags": ["warm", "japanese"],
+    "image": "https://source.unsplash.com/400x300/?ramen"
+  },
+  {
+    "id": 34,
+    "name": "Fruit Juice",
+    "description": "Freshly squeezed fruit juice.",
+    "price": 100,
+    "tags": ["fresh", "drink"],
+    "image": "https://source.unsplash.com/400x300/?juice"
+  },
+  {
+    "id": 35,
+    "name": "Green Salad",
+    "description": "Light and healthy green vegetable salad.",
+    "price": 110,
+    "tags": ["fresh", "healthy"],
+    "image": "https://source.unsplash.com/400x300/?greensalad"
+  },
+  {
+    "id": 36,
+    "name": "Cheesecake",
+    "description": "Rich and creamy cheesecake dessert.",
+    "price": 200,
+    "tags": ["rich", "dessert"],
+    "image": "https://source.unsplash.com/400x300/?cheesecake"
+  },
+  {
+    "id": 37,
+    "name": "Lasagna",
+    "description": "Layered Italian lasagna with cheese and sauce.",
+    "price": 240,
+    "tags": ["rich", "italian"],
+    "image": "https://source.unsplash.com/400x300/?lasagna"
+  },
+  {
+    "id": 38,
+    "name": "French Fries",
+    "description": "Crispy golden french fries with ketchup.",
+    "price": 90,
+    "tags": ["crispy", "snack"],
+    "image": "https://source.unsplash.com/400x300/?fries"
+  },
+  {
+    "id": 39,
+    "name": "Fried Chicken",
+    "description": "Crispy fried chicken with spices.",
+    "price": 230,
+    "tags": ["crispy", "non-veg"],
+    "image": "https://source.unsplash.com/400x300/?fried-chicken"
+  }
+]

@@ -1,136 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Mood-Based Food Suggestion</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f2f9ff;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Mood-based Food Delivery</title>
+<style>
+  /* ---------- Reset & Base ---------- */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #333; line-height: 1.5; overflow-x: hidden; position: relative; }
+  a { text-decoration: none; color: inherit; }
 
-    h1 {
-      color: #0077cc;
-      margin-bottom: 20px;
-    }
+  /* ---------- Particle Background ---------- */
+  #particle-canvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; background:#f0f4f8; }
 
-    textarea {
-      width: 100%;
-      max-width: 500px;
-      height: 100px;
-      padding: 10px;
-      font-size: 16px;
-      border: 2px solid #0077cc;
-      border-radius: 8px;
-      outline: none;
-      resize: none;
-    }
+  /* ---------- Header ---------- */
+  header { 
+    background: linear-gradient(90deg, #4a90e2, #50c9c3);
+    color: white; 
+    padding: 1.5rem 1rem; 
+    text-align: center; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 2rem; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
 
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #0077cc;
-      color: #fff;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+  /* ---------- Container ---------- */
+  .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 1; }
 
-    button:hover {
-      background: #005fa3;
-    }
+  /* ---------- Input ---------- */
+  .input-group { display: flex; justify-content: center; margin-bottom: 2rem; gap: 0.5rem; }
+  input[type=text] { flex: 1; padding: 0.7rem 1rem; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; transition: 0.3s; }
+  input[type=text]:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 10px rgba(74,144,226,0.4); }
+  button { padding: 0.7rem 1.5rem; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; transition: 0.3s; background: #4a90e2; color: white; font-weight: 500; }
+  button:hover { background: #357ab8; transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
 
-    .result {
-      margin-top: 30px;
-      padding: 20px;
-      width: 100%;
-      max-width: 500px;
-      border-radius: 12px;
-      background: #e6f3ff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
+  /* ---------- Cards ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+  .card { background: white; border-radius: 12px; padding: 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.4s; cursor: pointer; }
+  .card:hover { transform: translateY(-7px) scale(1.03); box-shadow: 0 12px 25px rgba(0,0,0,0.2); }
+  .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 0.8rem; transition: 0.4s; }
+  .card img:hover { transform: scale(1.05); filter: brightness(1.05); }
+  .card h3 { font-size: 1.2rem; margin-bottom: 0.3rem; color: #4a90e2; }
+  .card p { font-size: 0.95rem; color: #555; margin-bottom: 0.5rem; }
+  .card button { width: 100%; background: #50c9c3; }
+  .card button:hover { background: #3aa6a0; }
 
-    .result h2 {
-      margin-top: 0;
-      color: #005fa3;
-    }
+  /* ---------- Cart ---------- */
+  #cart { margin-top: 3rem; background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 600px; margin-left: auto; margin-right: auto; transition: 0.4s; }
+  #cart:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+  #cart h2 { margin-bottom: 1rem; font-size: 1.5rem; color: #4a90e2; text-align: center; }
+  #cart-items { list-style: none; padding: 0; }
+  #cart-items li { background: #f8f9fa; padding: 0.8rem 1rem; margin-bottom: 0.7rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+  #cart-items li:hover { background: #e1f2f1; box-shadow: 0 6px 15px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  #cart-items li button { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+  #cart-items li button:hover { background: #c0392b; }
 
-    ul {
-      margin: 10px 0 0;
-      padding-left: 20px;
-    }
+  #checkoutBtn { width: 100%; margin-top: 1rem; padding: 0.7rem; font-size: 1.1rem; background: #28a745; border-radius: 8px; transition: 0.4s; font-weight: 500; }
+  #checkoutBtn:hover { background: #1e7e34; transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-    li {
-      margin: 5px 0;
-    }
-  </style>
+  /* ---------- Responsive ---------- */
+  @media (max-width: 768px) {
+      .input-group { flex-direction: column; }
+      input[type=text] { width: 100%; }
+      button { width: 100%; margin-left: 0; }
+  }
+</style>
 </head>
 <body>
-  <h1>🍲 AI Mood-Based Food Suggestion</h1>
 
-  <textarea id="userInput" placeholder="Tell me how you feel..."></textarea>
-  <br>
-  <button onclick="getSuggestion()">Get Suggestion</button>
+<!-- Particle Background Canvas -->
+<canvas id="particle-canvas"></canvas>
 
-  <div class="result" id="resultBox" style="display:none;">
-    <h2>Mood: <span id="mood">...</span></h2>
-    <p><strong>Recommended Dishes:</strong></p>
-    <ul id="dishes"></ul>
+<header>
+  <h1>AI Mood-based Food Delivery</h1>
+</header>
+
+<div class="container">
+  <div class="input-group">
+    <input type="text" id="moodText" placeholder="Describe your mood...">
+    <button onclick="suggestFood()">Suggest Food</button>
   </div>
 
-  <script>
-    async function getSuggestion() {
-      const text = document.getElementById("userInput").value.trim();
-      const resultBox = document.getElementById("resultBox");
-      const moodSpan = document.getElementById("mood");
-      const dishesList = document.getElementById("dishes");
+  <div id="suggested" class="cards"></div>
 
-      if (!text) {
-        alert("Please write something about your mood!");
-        return;
-      }
+  <div id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <button id="checkoutBtn" onclick="checkout()">Checkout</button>
+  </div>
+</div>
 
-      try {
-        const res = await fetch("/api/suggest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text })
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+let cart = [];
+
+// ---------- Particle Effect ----------
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createParticles(count = 80) {
+    particles = [];
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 3 + 1,
+            dx: (Math.random() - 0.5) * 0.5,
+            dy: (Math.random() - 0.5) * 0.5,
+            alpha: Math.random() * 0.5 + 0.3
         });
-
-        if (!res.ok) {
-          throw new Error("Server error: " + res.status);
-        }
-
-        const data = await res.json();
-
-        // Fix: handle different response shapes
-        const mood = data.mood || (data.moods && data.moods[0]) || "Unknown";
-        moodSpan.textContent = mood;
-
-        dishesList.innerHTML = "";
-        (data.foods || []).forEach(dish => {
-          const li = document.createElement("li");
-          li.textContent = dish;
-          dishesList.appendChild(li);
-        });
-
-        resultBox.style.display = "block";
-      } catch (err) {
-        console.error("Error:", err);
-        alert("Something went wrong! Check backend logs.");
-      }
     }
-  </script>
+}
+createParticles();
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(74,144,226,${p.alpha})`;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx = -p.dx;
+        if (p.y < 0 || p.y > canvas.height) p.dy = -p.dy;
+    });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ---------- Cart Functions ----------
+function renderCart() {
+    const cartList = document.getElementById('cart-items');
+    cartList.innerHTML = '';
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `${item.name} - $${item.price} <button onclick="removeFromCart(${item.id})">Remove</button>`;
+        cartList.appendChild(li);
+    });
+}
+
+function addToCart(id) {
+    fetch('/api/cart', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({id}) })
+    .then(res=>res.json()).then(data => { cart=data.cart; renderCart(); });
+}
+function removeFromCart(id) {
+    fetch('/api/cart', { method: 'DELETE', headers: {'Content-Type':'application/json'}, body: JSON.stringify({id}) })
+    .then(res=>res.json()).then(data => { cart=data.cart; renderCart(); });
+}
+
+function suggestFood() {
+    const text = document.getElementById('moodText').value;
+    if(!text) return alert("Please enter your mood.");
+    fetch('/api/suggest', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text}) })
+    .then(res=>res.json()).then(data=>{
+        const suggested=document.getElementById('suggested'); suggested.innerHTML='';
+        data.dishes.forEach(dish=>{
+            const div=document.createElement('div'); div.className='card';
+            div.innerHTML=`
+                <img src="${dish.image}" alt="${dish.name}">
+                <h3>${dish.name}</h3>
+                <p>$${dish.price}</p>
+                <p>${dish.description}</p>
+                <button onclick="addToCart(${dish.id})">Add to Cart</button>
+            `;
+            suggested.appendChild(div);
+        });
+    });
+}
+
+// Load initial cart
+fetch('/api/cart').then(res=>res.json()).then(data=>{ cart=data; renderCart(); });
+
+// Razorpay Checkout
+function checkout() {
+    if(cart.length===0) return alert("Cart is empty");
+    let total=cart.reduce((sum,item)=>sum+item.price,0);
+    fetch('/api/create_order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:total})})
+    .then(res=>res.json()).then(order=>{
+        const options={
+            key:"rzp_test_RJh8bVllLjVPa8",
+            amount:order.amount,
+            currency:order.currency,
+            name:"AI Food Delivery",
+            description:"Order Payment",
+            order_id:order.id,
+            handler:function(response){
+                fetch('/api/verify_payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(response)})
+                .then(res=>res.json()).then(result=>{ alert(result.message); if(result.status==="success"){ cart=[]; renderCart(); } });
+            },
+            prefill:{name:"",email:""},
+            theme:{color:"#4a90e2"}
+        };
+        const rzp=new Razorpay(options); rzp.open();
+    });
+}
+</script>
+
 </body>
 </html>
