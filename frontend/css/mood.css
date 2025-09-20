@@ -175,34 +175,34 @@ body {
   0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ffdd57; }
   100% { text-shadow: 0 0 15px #ffdd57, 0 0 25px #ffdd57; }
 }
-/* ---------- Horizontal Cart ---------- */
+/* ---------- Horizontal Cart with All Cards Visible ---------- */
+/* ---------- Horizontal Cart with All Cards Full Width ---------- */
 .cards {
-  display: flex;               /* horizontal layout */
-  flex-direction: row;         /* align items in a row */
-  gap: 1rem;                   /* space between cards */
+  display: flex;
+  flex-direction: row;         /* horizontal layout */
+  gap: 2rem;                   /* space between cards */
+  justify-content: space-between; /* evenly distribute cards across width */
   width: 100%;
-  overflow-x: auto;            /* horizontal scroll if items overflow */
-  padding-bottom: 1rem;        /* some space below */
-  margin-top: 1rem;
-  scroll-behavior: smooth;     /* smooth scroll effect */
+  overflow-x: hidden;          /* hide horizontal scroll */
+  padding: 2rem 1rem;          /* space around cards */
+  margin-top: 2rem;
 }
 
-/* Hide default scrollbar for modern browsers */
-.cards::-webkit-scrollbar {
-  height: 8px;
-}
-.cards::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.3);
-  border-radius: 4px;
-}
-.cards::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Optional: keep cards same size for horizontal display */
+/* Cards: flexible width to fill the space evenly */
 .card {
-  flex: 0 0 250px; /* fixed width for horizontal layout */
+  flex: 1 1 0;                 /* allow cards to grow/shrink evenly */
+  min-width: 0;                /* prevent overflow */
   padding: 1rem;
   border-radius: 15px;
   background: rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+/* Optional: reduce image size slightly */
+.card img {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
 }
