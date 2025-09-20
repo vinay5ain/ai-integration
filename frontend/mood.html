@@ -44,11 +44,6 @@
       const cardsContainer = document.getElementById("suggested");
       cardsContainer.innerHTML = "";
 
-      // Show user input as chat bubble
-      const userCard = document.createElement("div");
-      userCard.className = "card user";
-      userCard.textContent = text;
-      cardsContainer.appendChild(userCard);
 
       // Show AI suggestions
       data.dishes.forEach(dish => {
