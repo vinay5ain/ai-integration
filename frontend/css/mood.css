@@ -175,3 +175,34 @@ body {
   0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ffdd57; }
   100% { text-shadow: 0 0 15px #ffdd57, 0 0 25px #ffdd57; }
 }
+/* ---------- Horizontal Cart ---------- */
+.cards {
+  display: flex;               /* horizontal layout */
+  flex-direction: row;         /* align items in a row */
+  gap: 1rem;                   /* space between cards */
+  width: 100%;
+  overflow-x: auto;            /* horizontal scroll if items overflow */
+  padding-bottom: 1rem;        /* some space below */
+  margin-top: 1rem;
+  scroll-behavior: smooth;     /* smooth scroll effect */
+}
+
+/* Hide default scrollbar for modern browsers */
+.cards::-webkit-scrollbar {
+  height: 8px;
+}
+.cards::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 4px;
+}
+.cards::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Optional: keep cards same size for horizontal display */
+.card {
+  flex: 0 0 250px; /* fixed width for horizontal layout */
+  padding: 1rem;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.3);
+}
