@@ -9,34 +9,110 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
 
-  <!-- External CSS -->
-  <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./css/global.css">
+<link rel="stylesheet" href="./css/index.css"> <!-- or mood.css / cart.css -->
+
+
 </head>
 <body>
 
   <!-- Header -->
   <header>
     <div class="logo">FoodMood AI</div>
-    <nav>
-      <a href="index.html">Home</a>
+    <nav aria-label="Main Navigation">
+      <a href="index.html" class="active">Home</a>
       <a href="mood.html">Mood AI</a>
       <a href="cart.html">Cart</a>
+      <a href="#about">About</a>
+      <a href="#testimonials">Testimonials</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="hero" id="hero">
-    <h1>Discover Foods Matching Your Mood</h1>
-    <p>Type your mood, get personalized food suggestions instantly</p>
-    <a href="mood.html"><button>Try Mood AI</button></a>
-  </section>
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <h1>Discover Foods Matching Your Mood</h1>
+      <p>Type your mood, get personalized food suggestions instantly</p>
+      <a href="mood.html"><button>Try Mood AI</button></a>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <h2>About FoodMood AI</h2>
+      <p>FoodMood AI helps you discover meals that perfectly match your emotions. Whether you’re happy, sad, or craving comfort food, our AI suggests the right dish for you.</p>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">1. Enter your mood</div>
+        <div class="step">2. Get personalized suggestions</div>
+        <div class="step">3. Add to cart & enjoy</div>
+      </div>
+    </section>
+
+    <!-- Popular Foods -->
+    <section class="popular-foods">
+      <h2>Popular Picks</h2>
+      <div class="food-grid">
+        <div class="food-item">
+          <img src="https://source.unsplash.com/300x200/?pizza" alt="Pizza">
+          <h3>Cheesy Pizza</h3>
+          <p>Perfect for a happy, celebration mood.</p>
+        </div>
+        <div class="food-item">
+          <img src="https://source.unsplash.com/300x200/?burger" alt="Burger">
+          <h3>Juicy Burger</h3>
+          <p>Great for casual, fun moods.</p>
+        </div>
+        <div class="food-item">
+          <img src="https://source.unsplash.com/300x200/?icecream" alt="Ice Cream">
+          <h3>Ice Cream</h3>
+          <p>Sweet escape for relaxed vibes.</p>
+        </div>
+          <div class="food-item">
+          <img src="https://source.unsplash.com/300x200/?icecream" alt="Ice Cream">
+          <h3>Ice Cream</h3>
+          <p>Sweet escape for relaxed vibes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+      <h2>What Our Users Say</h2>
+      <div class="testimonial">
+        <p>"FoodMood AI always nails my cravings. Love it!"</p>
+        <span>- Priya, Delhi</span>
+      </div>
+      <div class="testimonial">
+        <p>"When I’m stressed, it suggests comfort food that actually helps."</p>
+        <span>- Raj, Mumbai</span>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+   >
 
   <!-- Footer -->
   <footer id="contact">
-    <p>&copy; 2025 FoodMood AI. Crafted by You.</p>
+    <p>&copy; 2025 FoodMood AI.</p>
     <p>Contact: <a href="mailto:support@foodmoodai.com">support@foodmoodai.com</a></p>
+    <div class="socials">
+      <a href="#">Instagram</a> | <a href="#">Twitter</a> | <a href="#">Facebook</a>
+    </div>
   </footer>
+
+  <!-- Script for Mobile Navbar -->
+  <script>
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    toggleBtn.addEventListener('click', () => {
+      nav.classList.toggle('open');
+    });
+  </script>
 
 </body>
 </html>

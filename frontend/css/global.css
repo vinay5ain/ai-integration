@@ -1,0 +1,52 @@
+/* Reset & Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #2c2c2c;
+  color: #f4e9d8;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2rem;
+  background: #e76f51;
+  color: #fffbe9;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+header .logo {
+  font-family: 'Forum', cursive;
+  font-size: 1.8rem;
+  color: #ffbe0b;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a { color: #fffbe9; font-weight: 500; transition: 0.3s; }
+header nav a:hover { color: #ffbe0b; }
+
+/* Footer */
+footer {
+  background: #e76f51;
+  color: #fffbe9;
+  padding: 2rem;
+  text-align: center;
+}
+footer a { color: #ffbe0b; text-decoration: underline; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(247,127,0,0.7); }
+  50% { box-shadow: 0 0 30px rgba(247,127,0,1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .input-group { flex-direction: column; }
+  .input-group input[type=text], .input-group button { width: 100%; }
+}

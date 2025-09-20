@@ -1,0 +1,33 @@
+#cart {
+  max-width: 700px; margin: 3rem auto;
+  background: linear-gradient(rgba(44,44,44,0.7), rgba(44,44,44,0.7)),
+              url('./assets/pizza-6764430_1920.jpg') center/cover no-repeat;
+  padding: 2rem; border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  color: #fffbe9; transition: 0.3s;
+}
+#cart h2 {
+  text-align: center; font-size: 2.5rem;
+  margin-bottom: 1.5rem; color: #ffbe0b;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+}
+#cart ul { list-style: none; padding: 0; }
+#cart li {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,0.95); color: #333;
+  padding: 1rem 1.2rem; margin-bottom: 1rem;
+  border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+#cart li:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+#cart li button {
+  background: #e76f51; color: white; border: none; border-radius: 8px;
+  padding: 0.4rem 0.8rem; cursor: pointer; transition: 0.3s;
+}
+#cart li button:hover { background: #d62828; transform: translateY(-1px); }
+#checkoutBtn {
+  width: 100%; margin-top: 1.5rem; padding: 0.8rem;
+  font-size: 1.2rem; background: #f77f00; border-radius: 10px;
+  color: white; cursor: pointer; font-weight: 600; transition: 0.3s;
+}
+#checkoutBtn:hover { background: #d62828; transform: translateY(-2px); }
