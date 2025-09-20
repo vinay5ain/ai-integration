@@ -5,7 +5,7 @@
     "description": "Cold and creamy delight, perfect for sweet moods.",
     "price": 120,
     "tags": ["sweet", "dessert"],
-    "image": "https://source.unsplash.com/400x300/?icecream"
+    "image": "./assets/ice-cream.jpg"
   },
   {
     "id": 2,

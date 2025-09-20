@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart - FoodMood AI</title>
+<style>
+  body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #333; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #4a90e2; color: white; }
+  header .logo { font-family: 'Forum', cursive; font-size: 1.8rem; }
+  header nav a { color: white; margin-left: 1rem; }
+  #cart { max-width: 600px; margin: 2rem auto; background: #f0f4f8; padding: 1.5rem; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+  #cart ul { list-style: none; padding: 0; }
+  #cart li { display: flex; justify-content: space-between; align-items: center; background: white; padding: 0.8rem 1rem; margin-bottom: 0.7rem; border-radius: 8px; }
+  #cart li button { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 0.3rem 0.6rem; cursor: pointer; }
+  #checkoutBtn { width: 100%; margin-top: 1rem; padding: 0.7rem; font-size: 1.1rem; background: #28a745; border-radius: 8px; color: white; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">FoodMood AI</div>
+  <nav>
+    <a href="/index.html">Home</a>
+  </nav>
+</header>
+
+<div id="cart">
+  <h2>Your Cart</h2>
+  <ul id="cart-items"></ul>
+  <button id="checkoutBtn">Checkout</button>
+</div>
+
+<script>
+  const cartList = document.getElementById('cart-items');
+
+  async function fetchCart() {
+    const res = await fetch('/api/cart');
+    const cartItems = await res.json();
+    renderCart(cartItems);
+  }
+
+  function renderCart(items) {
+    cartList.innerHTML = '';
+    if(items.length === 0){
+      cartList.innerHTML = '<li>Your cart is empty.</li>';
+      return;
+    }
+    items.forEach((item) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${item.name} - ₹${item.price}
+        <button onclick="removeItem(${item.id})">Remove</button>
+      `;
+      cartList.appendChild(li);
+    });
+  }
+
+  async function removeItem(dishId) {
+    await fetch('/api/cart', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: dishId })
+    });
+    fetchCart();
+  }
+
+  document.getElementById('checkoutBtn').addEventListener('click', async () => {
+    const res = await fetch('/api/cart');
+    const cartItems = await res.json();
+    if(cartItems.length === 0) return alert('Cart is empty.');
+
+    const amount = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+    // Create Razorpay order
+    const orderRes = await fetch('/api/create_order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ amount })
+    });
+    const orderData = await orderRes.json();
+
+    const options = {
+      key: '<YOUR_RAZORPAY_KEY_ID>',
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "FoodMood AI",
+      description: "Order Payment",
+      order_id: orderData.id,
+      handler: async function(response){
+        // Verify payment
+        await fetch('/api/verify_payment', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(response)
+        });
+        alert('Payment Successful!');
+        fetchCart();
+      },
+      theme: { color: "#4a90e2" }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  });
+
+  fetchCart();
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+</html>
