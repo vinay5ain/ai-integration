@@ -133,7 +133,7 @@
     "description": "Crispy potato chips seasoned with salt.",
     "price": 60,
     "tags": ["crunchy", "snack"],
-    "image": "https://source.unsplash.com/400x300/?chips"
+    "image": "./assets/chips.jpg"
   },
   {
     "id": 18,
@@ -141,7 +141,7 @@
     "description": "Corn nachos with cheese and jalapeños.",
     "price": 140,
     "tags": ["crunchy", "mexican"],
-    "image": "https://source.unsplash.com/400x300/?nachos"
+    "image": "./assets/nachos.jpg"
   },
   {
     "id": 19,
@@ -149,7 +149,7 @@
     "description": "Traditional Japanese sushi with rice and fish.",
     "price": 300,
     "tags": ["exotic", "japanese"],
-    "image": "https://source.unsplash.com/400x300/?sushi"
+    "image": "./assets/sushi.jpg"
   },
   {
     "id": 20,
@@ -157,7 +157,7 @@
     "description": "Deep-fried falafel balls served with pita.",
     "price": 180,
     "tags": ["exotic", "mediterranean"],
-    "image": "https://source.unsplash.com/400x300/?falafel"
+    "image": "./assets/falafel.jpg"
   },
   {
     "id": 21,
@@ -165,7 +165,7 @@
     "description": "Steamed white rice, perfect as a base dish.",
     "price": 90,
     "tags": ["neutral", "base"],
-    "image": "https://source.unsplash.com/400x300/?rice"
+    "image": "./assets/rice.jpg"
   },
   {
     "id": 22,
@@ -173,7 +173,7 @@
     "description": "Freshly baked bread loaf.",
     "price": 70,
     "tags": ["neutral", "base"],
-    "image": "https://source.unsplash.com/400x300/?bread"
+    "image": "./assets/bread.jpg"
   },
   {
     "id": 23,
@@ -181,7 +181,7 @@
     "description": "Soft South Indian steamed rice cakes.",
     "price": 100,
     "tags": ["neutral", "indian"],
-    "image": "https://source.unsplash.com/400x300/?idli"
+    "image": "./assets/idli.jpg"
   },
   {
     "id": 24,
@@ -189,7 +189,7 @@
     "description": "Bitter-sweet dark chocolate bar.",
     "price": 150,
     "tags": ["bitter", "sweet"],
-    "image": "https://source.unsplash.com/400x300/?dark-chocolate"
+    "image": "./assets/dark-chocolate.jpg"
   },
   {
     "id": 25,
@@ -197,7 +197,7 @@
     "description": "Hot brewed coffee to energize your day.",
     "price": 120,
     "tags": ["bitter", "drink"],
-    "image": "https://source.unsplash.com/400x300/?coffee"
+    "image": "./assets/coffee.jpg"
   },
   {
     "id": 26,
@@ -205,7 +205,7 @@
     "description": "Chilled lemonade with tangy flavor.",
     "price": 80,
     "tags": ["sour", "drink"],
-    "image": "https://source.unsplash.com/400x300/?lemonade"
+    "image": "./assets/lemonade.jpg"
   },
   {
     "id": 27,
@@ -213,7 +213,7 @@
     "description": "Tangy and sour pickles for flavor.",
     "price": 60,
     "tags": ["sour", "side"],
-    "image": "https://source.unsplash.com/400x300/?pickles"
+    "image": "./assets/pickles.jpg"
   },
   {
     "id": 28,
@@ -221,7 +221,7 @@
     "description": "Lightly steamed seasonal vegetables.",
     "price": 100,
     "tags": ["light", "healthy"],
-    "image": "https://source.unsplash.com/400x300/?vegetables"
+    "image": "./assets/steamed-veggies.jpg"
   },
   {
     "id": 29,
@@ -229,7 +229,7 @@
     "description": "Soft and spongy Gujarati snack.",
     "price": 90,
     "tags": ["light", "indian"],
-    "image": "https://source.unsplash.com/400x300/?dhokla"
+    "image": "./assets/dhokla.jpg"
   },
   {
     "id": 30,
@@ -237,7 +237,7 @@
     "description": "Chocolate brownie with gooey center.",
     "price": 160,
     "tags": ["chocolate", "dessert"],
-    "image": "https://source.unsplash.com/400x300/?brownie"
+    "image": "./assets/brownie.jpg"
   },
   {
     "id": 31,
@@ -245,7 +245,7 @@
     "description": "Warm hot chocolate topped with cream.",
     "price": 150,
     "tags": ["chocolate", "drink"],
-    "image": "https://source.unsplash.com/400x300/?hot-chocolate"
+    "image": "./assets/hot-chocolate.jpg"
   },
   {
     "id": 32,
@@ -253,7 +253,7 @@
     "description": "Comforting Indian rice-lentil porridge.",
     "price": 120,
     "tags": ["warm", "indian"],
-    "image": "https://source.unsplash.com/400x300/?khichdi"
+    "image": "./assets/khichdi.jpg"
   },
   {
     "id": 33,
@@ -261,7 +261,7 @@
     "description": "Japanese noodle soup served hot.",
     "price": 220,
     "tags": ["warm", "japanese"],
-    "image": "https://source.unsplash.com/400x300/?ramen"
+    "image": "./assets/ramen.jpg"
   },
   {
     "id": 34,
@@ -269,7 +269,7 @@
     "description": "Freshly squeezed fruit juice.",
     "price": 100,
     "tags": ["fresh", "drink"],
-    "image": "https://source.unsplash.com/400x300/?juice"
+    "image": "./assets/fruit-juice.jpg"
   },
   {
     "id": 35,
@@ -277,7 +277,7 @@
     "description": "Light and healthy green vegetable salad.",
     "price": 110,
     "tags": ["fresh", "healthy"],
-    "image": "https://source.unsplash.com/400x300/?greensalad"
+    "image": "./assets/green-salad.jpg"
   },
   {
     "id": 36,
@@ -285,7 +285,7 @@
     "description": "Rich and creamy cheesecake dessert.",
     "price": 200,
     "tags": ["rich", "dessert"],
-    "image": "https://source.unsplash.com/400x300/?cheesecake"
+    "image": "./assets/cheesecake.jpg"
   },
   {
     "id": 37,
@@ -293,7 +293,7 @@
     "description": "Layered Italian lasagna with cheese and sauce.",
     "price": 240,
     "tags": ["rich", "italian"],
-    "image": "https://source.unsplash.com/400x300/?lasagna"
+    "image": "./assets/lasagna.jpg"
   },
   {
     "id": 38,
@@ -301,7 +301,7 @@
     "description": "Crispy golden french fries with ketchup.",
     "price": 90,
     "tags": ["crispy", "snack"],
-    "image": "https://source.unsplash.com/400x300/?fries"
+    "image": "./assets/french-fries.jpg"
   },
   {
     "id": 39,
@@ -309,6 +309,6 @@
     "description": "Crispy fried chicken with spices.",
     "price": 230,
     "tags": ["crispy", "non-veg"],
-    "image": "https://source.unsplash.com/400x300/?fried-chicken"
+    "image": "./assets/fried-chicken.jpg"
   }
 ]

@@ -175,34 +175,90 @@ body {
   0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ffdd57; }
   100% { text-shadow: 0 0 15px #ffdd57, 0 0 25px #ffdd57; }
 }
-
-/* ---------- Horizontal Cart with All Cards Full Width ---------- */
+/* ---------- Full-Screen Cards Layout ---------- */
 .cards {
-  display: flex;
-  flex-direction: row;         /* horizontal layout */
-  gap: 2rem;                   /* space between cards */
-  justify-content: space-between; /* evenly distribute cards across width */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* responsive grid */
+  gap: 2rem;
   width: 100%;
-  overflow-x: hidden;          /* hide horizontal scroll */
-  padding: 2rem 1rem;          /* space around cards */
-  margin-top: 2rem;
+  padding: 2rem;
+  margin: 0 auto;
+  animation: fadeInGrid 0.8s ease-in-out;
 }
 
-/* Cards: flexible width to fill the space evenly */
+/* Each Card */
 .card {
-  flex: 1 1 0;                 /* allow cards to grow/shrink evenly */
-  min-width: 0;                /* prevent overflow */
-  padding: 1rem;
-  border-radius: 15px;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 20px;
+  padding: 1.5rem;
   text-align: center;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  transform: translateY(30px);
+  opacity: 0;
+  animation: slideUp 0.8s forwards;
 }
 
-/* Optional: reduce image size slightly */
+/* Staggered Animation for Aesthetic Effect */
+.card:nth-child(1) { animation-delay: 0.2s; }
+.card:nth-child(2) { animation-delay: 0.4s; }
+.card:nth-child(3) { animation-delay: 0.6s; }
+.card:nth-child(4) { animation-delay: 0.8s; }
+
+/* Card Hover Effect */
+.card:hover {
+  transform: translateY(-10px) scale(1.03);
+  background: rgba(0, 191, 255, 0.15);
+  box-shadow: 0 12px 35px rgba(0, 191, 255, 0.5);
+  transition: all 0.4s ease;
+}
+
+/* Card Image */
 .card img {
   width: 100%;
-  max-height: 120px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+.card img:hover {
+  transform: scale(1.08);
+}
+
+/* Card Title + Text */
+.card h3 {
+  font-size: 1.4rem;
   margin-bottom: 0.5rem;
+  color: #ffdd57;
+}
+.card p {
+  font-size: 1rem;
+  color: #eee;
+}
+
+/* Buttons inside Cards */
+.card button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background: #00bfff;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.8rem;
+}
+.card button:hover {
+  background: #1e90ff;
+  transform: translateY(-3px) scale(1.07);
+}
+
+/* ---------- Animations ---------- */
+@keyframes slideUp {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInGrid {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
