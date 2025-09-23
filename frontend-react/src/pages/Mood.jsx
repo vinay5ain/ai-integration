@@ -1,4 +1,3 @@
-// src/pages/Mood.jsx
 import { useState, useEffect } from "react";
 
 function Mood() {
@@ -6,7 +5,10 @@ function Mood() {
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Load only mood.css
+  // Backend base URL from .env (fallback to local dev)
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // Load mood.css only on this page
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -18,6 +20,7 @@ function Mood() {
     };
   }, []);
 
+  // Call backend for suggestions
   async function suggestFood() {
     if (!text.trim()) {
       alert("Please describe your mood.");
@@ -25,8 +28,7 @@ function Mood() {
     }
     setLoading(true);
     try {
-      // Example API call (adjust backend route)
-      const response = await fetch("/api/suggest", {
+      const response = await fetch(`${API_URL}/api/suggest`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -43,6 +45,7 @@ function Mood() {
     }
   }
 
+  // Add dish to local cart
   function addToCart(id, name, image) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (!cart.find((item) => item.id === id)) {
@@ -57,6 +60,7 @@ function Mood() {
   return (
     <section className="ai-section">
       <h2>AI Mood-based Food Suggestions</h2>
+
       <div className="input-group">
         <input
           type="text"
@@ -65,17 +69,16 @@ function Mood() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && suggestFood()}
         />
-        <span
-          className="search-icon"
-          role="button"
-          onClick={suggestFood}
-        >
+        <span className="search-icon" role="button" onClick={suggestFood}>
           🔍
         </span>
       </div>
 
       <div id="suggested" className="cards">
         {loading && <p>Loading...</p>}
+        {!loading && dishes.length === 0 && (
+          <p style={{ opacity: 0.7 }}>No suggestions yet. Try describing your mood.</p>
+        )}
         {dishes.map((dish) => (
           <div key={dish.id} className="card ai">
             <img src={dish.image} alt={dish.name} />
@@ -88,11 +91,8 @@ function Mood() {
         ))}
       </div>
 
-      {/* Cart Button */}
-      <button
-        className="cart-btn"
-        onClick={() => (window.location.href = "/cart")}
-      >
+      {/* Floating Cart Button */}
+      <button className="cart-btn" onClick={() => (window.location.href = "/cart")}>
         🛒
       </button>
     </section>

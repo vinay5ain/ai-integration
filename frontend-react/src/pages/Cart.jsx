@@ -1,4 +1,3 @@
-// src/pages/Cart.jsx
 import { useEffect, useState } from "react";
 
 function Cart() {
@@ -16,47 +15,51 @@ function Cart() {
     };
   }, []);
 
-  async function fetchCart() {
-    const res = await fetch("/api/cart");
-    const data = await res.json();
-    setItems(data);
-  }
-
-  async function removeItem(id) {
-    await fetch("/api/cart", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    fetchCart();
+  // Load cart from localStorage
+  function loadCart() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    setItems(cart);
   }
 
   useEffect(() => {
-    fetchCart();
+    loadCart();
   }, []);
+
+  function removeItem(id) {
+    const newCart = items.filter((item) => item.id !== id);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+    setItems(newCart);
+  }
 
   async function checkout() {
     if (items.length === 0) {
       alert("Cart is empty.");
       return;
     }
-    const amount = items.reduce((sum, item) => sum + item.price, 0);
-    const orderRes = await fetch("/api/create_order", {
+
+    // Total amount in INR
+    const amount = items.reduce((sum, item) => sum + (item.price || 100), 0); // default 100 if no price
+
+    // Create Razorpay order via backend
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    const orderRes = await fetch(`${API_URL}/api/create_order`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
     });
+
     const orderData = await orderRes.json();
 
     const options = {
-      key: "rzp_test_RJh8bVllLjVPa8",
+      key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_RJh8bVllLjVPa8",
       amount: orderData.amount,
       currency: orderData.currency,
       name: "FoodMood AI",
       description: "Order Payment",
       order_id: orderData.id,
       handler: async function (response) {
-        const verifyRes = await fetch("/api/verify_payment", {
+        // Verify payment on backend
+        const verifyRes = await fetch(`${API_URL}/api/verify_payment`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(response),
@@ -64,15 +67,16 @@ function Cart() {
         const verifyData = await verifyRes.json();
         if (verifyData.status === "success") {
           alert("Payment Successful!");
+          localStorage.removeItem("cart");
+          setItems([]);
         } else {
           alert("Payment Verification Failed.");
         }
-        fetchCart();
       },
       theme: { color: "#4a90e2" },
     };
 
-    // Razorpay SDK must be loaded in public/index.html
+    // Razorpay SDK must be included in public/index.html
     const rzp = new window.Razorpay(options);
     rzp.open();
   }
@@ -86,7 +90,7 @@ function Cart() {
         ) : (
           items.map((item) => (
             <li key={item.id}>
-              {item.name} - ₹{item.price}
+              {item.name} - ₹{item.price || 100}
               <button onClick={() => removeItem(item.id)}>Remove</button>
             </li>
           ))
