@@ -6,9 +6,8 @@
   <title>Mood AI - Food Suggestions</title>
   <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="./css/global.css">
-<link rel="stylesheet" href="./css/mood.css">
+  <link rel="stylesheet" href="./css/mood.css">
 </head>
 <body>
 
@@ -25,13 +24,13 @@
   <!-- Cart Button -->
   <button class="cart-btn" onclick="location.href='cart.html'">🛒</button>
 
-  <!-- JS -->
   <script>
+    // Suggest food based on mood
     async function suggestFood() {
       const text = document.getElementById("moodText").value.trim();
       if (!text) return alert("Please describe your mood.");
 
-      // Example API call
+      // Example API call - replace with your backend
       const response = await fetch("/api/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,7 +43,6 @@
       const cardsContainer = document.getElementById("suggested");
       cardsContainer.innerHTML = "";
 
-
       // Show AI suggestions
       data.dishes.forEach(dish => {
         const card = document.createElement("div");
@@ -53,7 +51,7 @@
           <img src="${dish.image}" alt="${dish.name}">
           <h3>${dish.name}</h3>
           <p>${dish.description}</p>
-          <button onclick="addToCart(${dish.id})">Add to Cart</button>
+          <button onclick="addToCart(${dish.id}, '${dish.name}', '${dish.image}')">Add to Cart</button>
         `;
         cardsContainer.appendChild(card);
       });
@@ -62,14 +60,17 @@
       cardsContainer.scrollTop = cardsContainer.scrollHeight;
     }
 
-    async function addToCart(dishId) {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: dishId })
-      });
-      const data = await res.json();
-      alert(data.message || "Added to cart");
+    // Add item to cart (stored in localStorage)
+    function addToCart(id, name, image) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      // Check if item already in cart
+      if (!cart.find(item => item.id === id)) {
+        cart.push({ id, name, image, quantity: 1 });
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert(`${name} added to cart`);
+      } else {
+        alert(`${name} is already in the cart`);
+      }
     }
 
     // Trigger on Enter key
