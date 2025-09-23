@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cart - FoodMood AI</title>
- <link rel="stylesheet" href="./css/global.css">
-<link rel="stylesheet" href="./css/cart.css"> <!-- or mood.css / cart.css -->
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - FoodMood AI</title>
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/cart.css">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; }
+    #cart { margin-top: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+    button { padding: 5px 10px; cursor: pointer; }
+    .total { font-weight: bold; margin-top: 20px; }
+  </style>
 </head>
 <body>
 
@@ -20,87 +28,66 @@
 <div id="cart">
   <h2>Your Cart</h2>
   <ul id="cart-items"></ul>
+  <div class="total" id="cart-total"></div>
   <button id="checkoutBtn">Checkout</button>
 </div>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  const cartList = document.getElementById('cart-items');
+  // ===== MOCK CART STORAGE =====
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-  async function fetchCart() {
-    const res = await fetch('/api/cart');
-    const cartItems = await res.json();
-    renderCart(cartItems);
-  }
-
-  function renderCart(items) {
+  // ===== RENDER CART =====
+  function renderCart() {
+    const cartList = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
     cartList.innerHTML = '';
-    if(items.length === 0){
+
+    if(cart.length === 0){
       cartList.innerHTML = '<li>Your cart is empty.</li>';
+      cartTotal.textContent = '';
       return;
     }
-    items.forEach((item) => {
+
+    let total = 0;
+    cart.forEach((item, index) => {
+      total += item.price;
       const li = document.createElement('li');
       li.innerHTML = `
         ${item.name} - ₹${item.price}
-        <button onclick="removeItem(${item.id})">Remove</button>
+        <button onclick="removeItem(${index})">Remove</button>
       `;
       cartList.appendChild(li);
     });
+
+    cartTotal.textContent = `Total: ₹${total}`;
   }
 
-  async function removeItem(dishId) {
-    await fetch('/api/cart', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: dishId })
-    });
-    fetchCart();
+  // ===== ADD ITEM TO CART =====
+  function addToCart(dish) {
+    cart.push(dish);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+    alert(`${dish.name} added to cart!`);
   }
 
-  document.getElementById('checkoutBtn').addEventListener('click', async () => {
-    const res = await fetch('/api/cart');
-    const cartItems = await res.json();
-    if(cartItems.length === 0) return alert('Cart is empty.');
+  // ===== REMOVE ITEM =====
+  function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
 
-    const amount = cartItems.reduce((sum, item) => sum + item.price, 0);
-
-    // Create Razorpay order
-    const orderRes = await fetch('/api/create_order', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ amount })
-    });
-    const orderData = await orderRes.json();
-
-    const options = {
-      key: 'rzp_test_RJh8bVllLjVPa8', // Your Razorpay key
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: "FoodMood AI",
-      description: "Order Payment",
-      order_id: orderData.id,
-      handler: async function(response){
-        const verifyRes = await fetch('/api/verify_payment', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(response)
-        });
-        const verifyData = await verifyRes.json();
-        if(verifyData.status === 'success'){
-          alert('Payment Successful!');
-        } else {
-          alert('Payment Verification Failed.');
-        }
-        fetchCart();
-      },
-      theme: { color: "#4a90e2" }
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
+  // ===== CHECKOUT =====
+  document.getElementById('checkoutBtn').addEventListener('click', () => {
+    if(cart.length === 0) return alert('Cart is empty.');
+    let total = cart.reduce((sum, item) => sum + item.price, 0);
+    alert(`Order placed! Total: ₹${total}`);
+    cart = [];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
   });
 
-  fetchCart();
+  // ===== INIT CART =====
+  renderCart();
 </script>
 
 </body>
