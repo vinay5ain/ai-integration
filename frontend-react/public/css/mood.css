@@ -1,0 +1,226 @@
+/* ---------- Global Styles ---------- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+              url('./assets/pizza-6764430_1920.jpg') center/cover no-repeat fixed;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---------- AI Section (Transparent) ---------- */
+.ai-section {
+  padding: 3rem 2rem;
+  text-align: center;
+  border-radius: 20px;
+  max-width: 1200px;
+  width: 95%;
+  margin: 3rem auto;
+  background: transparent; /* No blur, no shadow */
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Section Heading */
+.ai-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: #ffdd57;
+  text-shadow: 0 0 15px rgba(255, 221, 87, 0.9);
+  animation: glowText 2s infinite alternate;
+  letter-spacing: 1px;
+}
+
+/* ---------- Search Bar ---------- */
+.input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 550px;
+  transition: 0.3s;
+}
+
+.input-group input[type=text] {
+  flex: 1;
+  padding: 0.9rem 1.2rem;
+  border-radius: 50px;
+  border: 2px solid rgba(255,255,255,0.3);
+  font-size: 1rem;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.input-group input[type=text]::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.input-group input[type=text]:focus {
+  outline: none;
+  border-color: #ffdd57;
+  background: rgba(255,255,255,0.25);
+  box-shadow: 0 0 20px rgba(255,221,87,0.7);
+  transform: scale(1.03);
+}
+
+.search-icon {
+  font-size: 1.5rem;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(135deg, #00bfff, #1e90ff);
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-icon:hover {
+  background: linear-gradient(135deg, #1e90ff, #00bfff);
+  transform: scale(1.2) rotate(12deg);
+}
+
+/* ---------- Cards Layout (3 Cards) ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  padding: 2rem 0;
+  margin: 0 auto;
+  animation: fadeInGrid 0.8s ease-in-out;
+}
+
+/* Card */
+.card {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  transform: translateY(30px);
+  opacity: 0;
+  animation: slideUp 0.8s forwards;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative Glow on Hover */
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0,191,255,0.2), transparent 70%);
+  transform: rotate(25deg);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.card:hover::before { opacity: 1; }
+
+/* Staggered Animation */
+.card:nth-child(1) { animation-delay: 0.2s; }
+.card:nth-child(2) { animation-delay: 0.4s; }
+.card:nth-child(3) { animation-delay: 0.6s; }
+
+/* Card Hover Effect */
+.card:hover {
+  transform: translateY(-12px) scale(1.05);
+  background: rgba(0, 191, 255, 0.18);
+  box-shadow: 0 15px 35px rgba(0, 191, 255, 0.6);
+}
+
+/* Card Image */
+.card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 1rem;
+  transition: transform 0.4s ease;
+}
+.card img:hover {
+  transform: scale(1.1);
+}
+
+/* Card Title & Text */
+.card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #ffdd57;
+}
+.card p {
+  font-size: 1rem;
+  color: #eee;
+}
+
+/* Buttons inside Cards */
+.card button {
+  padding: 0.7rem 1.3rem;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #c3c954, #a0b92a);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.8rem;
+}
+.card button:hover {
+  background: linear-gradient(135deg, #1e90ff, #00bfff);
+  transform: translateY(-4px) scale(1.08);
+}
+
+/* ---------- Cart Button ---------- */
+.cart-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #344a7c;
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.6rem;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(67, 62, 133, 0.6);
+  transition: 0.3s;
+  z-index: 1000;
+}
+.cart-btn:hover {
+  background: #ff4500;
+  transform: scale(1.12);
+}
+
+/* ---------- Animations ---------- */
+@keyframes slideUp {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInGrid {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes glowText {
+  0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ffdd57; }
+  100% { text-shadow: 0 0 20px #ffdd57, 0 0 35px #ffdd57; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 992px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .cards { grid-template-columns: 1fr; }
+}
