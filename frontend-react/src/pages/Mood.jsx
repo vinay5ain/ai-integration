@@ -16,7 +16,8 @@ function Mood() {
     document.head.appendChild(link);
 
     return () => {
-      document.head.removeChild(link);
+      docum
+      ent.head.removeChild(link);
     };
   }, []);
 

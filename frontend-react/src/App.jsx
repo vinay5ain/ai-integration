@@ -9,6 +9,9 @@ function App() {
   // Show minimal navbar on /cart
   const isCartPage = location.pathname === "/cart";
 
+  // Helper for active link
+  const isActive = (path) => location.pathname === path ? "active" : "";
+
   return (
     <div>
       {!hideLayout && (
@@ -17,14 +20,14 @@ function App() {
           <nav aria-label="Main Navigation">
             {isCartPage ? (
               <>
-                <Link to="/" className="active">Home</Link>
-                <Link to="/mood">Mood AI</Link>
+                <Link to="/" className={isActive("/")}>Home</Link>
+                <Link to="/mood" className={isActive("/mood")}>Mood AI</Link>
               </>
             ) : (
               <>
-                <Link to="/" className="active">Home</Link>
-                <Link to="/mood">Mood AI</Link>
-                <Link to="/cart">Cart</Link>
+                <Link to="/" className={isActive("/")}>Home</Link>
+                <Link to="/mood" className={isActive("/mood")}>Mood AI</Link>
+                <Link to="/cart" className={isActive("/cart")}>Cart</Link>
                 <a href="#about">About</a>
                 <a href="#testimonials">Testimonials</a>
                 <a href="#contact">Contact</a>
