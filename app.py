@@ -9,9 +9,9 @@ import hmac
 import hashlib
 
 # -----------------------------
-# Initialize app
+# Initialize Flask
 # -----------------------------
-app = Flask(__name__, static_folder="frontend/build", static_url_path="")
+app = Flask(__name__, static_folder="dist", static_url_path="")
 CORS(app)
 
 # -----------------------------
@@ -20,11 +20,6 @@ CORS(app)
 HERE = os.path.dirname(__file__)
 DISHES_PATH = os.path.join(HERE, "dishes.json")
 FOODS_PATH = os.path.join(HERE, "foods.json")
-
-if not os.path.exists(DISHES_PATH):
-    raise FileNotFoundError(f"{DISHES_PATH} not found.")
-if not os.path.exists(FOODS_PATH):
-    raise FileNotFoundError(f"{FOODS_PATH} not found.")
 
 with open(DISHES_PATH, "r", encoding="utf-8") as f:
     DISHES = json.load(f)
@@ -39,8 +34,6 @@ taste_to_food = FOODS["taste_to_food"]
 # -----------------------------
 HF_API_URL = "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
 HF_API_KEY = os.getenv("HF_API_KEY")
-if not HF_API_KEY:
-    raise RuntimeError("HF_API_KEY not set.")
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 # -----------------------------
@@ -48,8 +41,6 @@ headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 # -----------------------------
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
-if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
-    raise RuntimeError("Razorpay credentials not set.")
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # -----------------------------
@@ -109,6 +100,7 @@ def suggest():
     if not recommended:
         recommended = [dish for dish in DISHES if "comfort" in dish["tags"]]
 
+    # Remove duplicates
     seen = set()
     unique_recommended = []
     for dish in recommended:
@@ -117,17 +109,7 @@ def suggest():
             seen.add(dish["id"])
     recommended = unique_recommended[:6]
 
-    if not valid_moods:
-        valid_moods = [{"label": "neutral", "confidence": 1.0}]
-
     return jsonify({"moods": valid_moods, "dishes": recommended})
-
-# -----------------------------
-# API: Get all dishes
-# -----------------------------
-@app.route("/api/dishes")
-def get_dishes():
-    return jsonify(DISHES)
 
 # -----------------------------
 # API: Cart management
@@ -181,13 +163,10 @@ def verify_payment():
     razorpay_payment_id = data.get("razorpay_payment_id")
     razorpay_signature = data.get("razorpay_signature")
 
-    if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
-        return jsonify({"error": "All payment fields are required"}), 400
-
     msg = f"{razorpay_order_id}|{razorpay_payment_id}"
     generated_signature = hmac.new(
-        bytes(RAZORPAY_KEY_SECRET, 'utf-8'),
-        msg=bytes(msg, 'utf-8'),
+        bytes(RAZORPAY_KEY_SECRET, "utf-8"),
+        msg=bytes(msg, "utf-8"),
         digestmod=hashlib.sha256
     ).hexdigest()
 
