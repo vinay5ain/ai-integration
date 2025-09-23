@@ -1,43 +1,34 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Mood() {
   const [text, setText] = useState("");
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Backend base URL from .env (fallback to local dev)
+  const navigate = useNavigate(); // <- add this
+
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Load mood.css only on this page
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "/css/mood.css";
     document.head.appendChild(link);
-
-    return () => {
-      docum
-      ent.head.removeChild(link);
-    };
+    return () => document.head.removeChild(link);
   }, []);
 
-  // Call backend for suggestions
   async function suggestFood() {
-    if (!text.trim()) {
-      alert("Please describe your mood.");
-      return;
-    }
+    if (!text.trim()) return alert("Please describe your mood.");
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/suggest`, {
+      const res = await fetch(`${API_URL}/api/suggest`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-
-      if (!response.ok) throw new Error("Error fetching suggestions");
-
-      const data = await response.json();
+      if (!res.ok) throw new Error("Error fetching suggestions");
+      const data = await res.json();
       setDishes(data.dishes || []);
     } catch (e) {
       alert(e.message);
@@ -46,16 +37,13 @@ function Mood() {
     }
   }
 
-  // Add dish to local cart
   function addToCart(id, name, image) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (!cart.find((item) => item.id === id)) {
       cart.push({ id, name, image, quantity: 1 });
       localStorage.setItem("cart", JSON.stringify(cart));
       alert(`${name} added to cart`);
-    } else {
-      alert(`${name} is already in the cart`);
-    }
+    } else alert(`${name} is already in the cart`);
   }
 
   return (
@@ -92,8 +80,8 @@ function Mood() {
         ))}
       </div>
 
-      {/* Floating Cart Button */}
-      <button className="cart-btn" onClick={() => (window.location.href = "/cart")}>
+      {/* Fixed SPA navigation */}
+      <button className="cart-btn" onClick={() => navigate("/cart")}>
         🛒
       </button>
     </section>
