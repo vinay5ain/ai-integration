@@ -9,15 +9,20 @@ import hmac
 import hashlib
 
 # -----------------------------
+# Path to frontend build folder
+# -----------------------------
+HERE = os.path.dirname(__file__)
+FRONTEND_BUILD = os.path.join(HERE, "frontend-react", "dist")  # <-- Correct path
+
+# -----------------------------
 # Initialize Flask
 # -----------------------------
-app = Flask(__name__, static_folder="dist", static_url_path="")
+app = Flask(__name__, static_folder=FRONTEND_BUILD, static_url_path="")
 CORS(app)
 
 # -----------------------------
 # Load dishes + foods database
 # -----------------------------
-HERE = os.path.dirname(__file__)
 DISHES_PATH = os.path.join(HERE, "dishes.json")
 FOODS_PATH = os.path.join(HERE, "foods.json")
 
@@ -52,16 +57,13 @@ def infer_moods_cached(text, top_k=2):
     response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=20)
     if response.status_code != 200:
         raise RuntimeError(f"Hugging Face API error: {response.text}")
-
     result = response.json()
     if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
         result = result[0]
-
     if isinstance(result, list) and all(isinstance(r, dict) for r in result):
         sorted_res = sorted(result, key=lambda x: x["score"], reverse=True)
         top_res = sorted_res[:top_k]
-        moods = [(r["label"].lower(), float(r["score"])) for r in top_res]
-        return moods
+        return [(r["label"].lower(), float(r["score"])) for r in top_res]
     return [("neutral", 1.0)]
 
 # -----------------------------
@@ -79,7 +81,6 @@ def suggest():
     text = data.get("text", "").strip()
     if not text:
         return jsonify({"error": "text required"}), 400
-
     try:
         moods = infer_moods_cached(text, top_k=2)
     except Exception as e:
@@ -100,7 +101,6 @@ def suggest():
     if not recommended:
         recommended = [dish for dish in DISHES if "comfort" in dish["tags"]]
 
-    # Remove duplicates
     seen = set()
     unique_recommended = []
     for dish in recommended:
@@ -119,25 +119,22 @@ def manage_cart():
     global CART
     if request.method == "GET":
         return jsonify(CART)
-
     data = request.get_json(force=True)
     dish_id = data.get("id")
     if not dish_id:
         return jsonify({"error": "dish id required"}), 400
-
     if request.method == "POST":
         dish = next((d for d in DISHES if d["id"] == dish_id), None)
         if not dish:
             return jsonify({"error": "dish not found"}), 404
         CART.append(dish)
         return jsonify({"message": "added", "cart": CART})
-
     if request.method == "DELETE":
         CART = [d for d in CART if d["id"] != dish_id]
         return jsonify({"message": "removed", "cart": CART})
 
 # -----------------------------
-# API: Create Razorpay order
+# API: Razorpay
 # -----------------------------
 @app.route("/api/create_order", methods=["POST"])
 def create_order():
@@ -153,9 +150,6 @@ def create_order():
     })
     return jsonify(order)
 
-# -----------------------------
-# API: Verify Razorpay payment
-# -----------------------------
 @app.route("/api/verify_payment", methods=["POST"])
 def verify_payment():
     data = request.get_json(force=True)
@@ -194,12 +188,15 @@ def ping():
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    # Serve static files if they exist
+    full_path = os.path.join(app.static_folder, path)
+    if path != "" and os.path.exists(full_path):
         return send_from_directory(app.static_folder, path)
+    # Otherwise fallback to index.html
     return send_from_directory(app.static_folder, "index.html")
 
 # -----------------------------
-# Run app
+# Run Flask app
 # -----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
