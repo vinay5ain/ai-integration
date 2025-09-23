@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import json
 import os
+import json
 import requests
 from functools import lru_cache
 import razorpay
@@ -9,13 +9,13 @@ import hmac
 import hashlib
 
 # -----------------------------
-# Initialize app
+# Initialize Flask app
 # -----------------------------
-app = Flask(__name__, static_folder="frontend")
-CORS(app)
+app = Flask(__name__, static_folder="frontend")  # Serve React build
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # -----------------------------
-# Load dishes + foods database
+# Load dishes and foods database
 # -----------------------------
 HERE = os.path.dirname(__file__)
 DISHES_PATH = os.path.join(HERE, "dishes.json")
@@ -31,8 +31,8 @@ with open(DISHES_PATH, "r", encoding="utf-8") as f:
 with open(FOODS_PATH, "r", encoding="utf-8") as f:
     FOODS = json.load(f)
 
-mood_to_taste = FOODS["mood_to_taste"]
-taste_to_food = FOODS["taste_to_food"]
+mood_to_taste = FOODS.get("mood_to_taste", {})
+taste_to_food = FOODS.get("taste_to_food", {})
 
 # -----------------------------
 # Hugging Face API config
@@ -61,16 +61,16 @@ def infer_moods_cached(text, top_k=2):
     payload = {"inputs": text}
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=20)
+        response.raise_for_status()
     except Exception as e:
         raise RuntimeError(f"Hugging Face request failed: {str(e)}")
-    if response.status_code != 200:
-        raise RuntimeError(f"Hugging Face API error: {response.text}")
 
     try:
         result = response.json()
     except Exception:
         raise RuntimeError(f"Invalid JSON response from HF: {response.text}")
 
+    # Handle API response format
     if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
         result = result[0]
 
@@ -115,8 +115,9 @@ def suggest():
 
     recommended = [dish for dish in DISHES if dish["name"] in candidate_foods]
     if not recommended:
-        recommended = [dish for dish in DISHES if "comfort" in dish["tags"]]
+        recommended = [dish for dish in DISHES if "comfort" in dish.get("tags", [])]
 
+    # Ensure unique dishes
     seen = set()
     unique_recommended = []
     for dish in recommended:
@@ -131,23 +132,17 @@ def suggest():
     return jsonify({"moods": valid_moods, "dishes": recommended})
 
 # -----------------------------
-# API: Get all dishes
-# -----------------------------
-@app.route("/api/dishes")
-def get_dishes():
-    return jsonify(DISHES)
-
-# -----------------------------
 # API: Cart management
 # -----------------------------
 @app.route("/api/cart", methods=["GET", "POST", "DELETE"])
 def manage_cart():
     global CART
+    data = request.get_json(force=True) if request.data else {}
+    dish_id = data.get("id")
+
     if request.method == "GET":
         return jsonify(CART)
 
-    data = request.get_json(force=True)
-    dish_id = data.get("id")
     if not dish_id:
         return jsonify({"error": "dish id required"}), 400
 
@@ -194,8 +189,8 @@ def verify_payment():
 
     msg = f"{razorpay_order_id}|{razorpay_payment_id}"
     generated_signature = hmac.new(
-        bytes(RAZORPAY_KEY_SECRET, 'utf-8'),
-        msg=bytes(msg, 'utf-8'),
+        bytes(RAZORPAY_KEY_SECRET, "utf-8"),
+        msg=bytes(msg, "utf-8"),
         digestmod=hashlib.sha256
     ).hexdigest()
 
@@ -218,19 +213,19 @@ def ping():
     return jsonify({"status": "ok"})
 
 # -----------------------------
-# Serve frontend
+# Serve React frontend
 # -----------------------------
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    full_path = os.path.join(app.static_folder, path)
+    if path != "" and os.path.exists(full_path):
         return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, "index.html")
+    return send_from_directory(app.static_folder, "index.html")
 
 # -----------------------------
 # Run app
 # -----------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # ✅ Render assigns PORT
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
