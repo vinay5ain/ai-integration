@@ -18,7 +18,7 @@ function Mood() {
     return () => document.head.removeChild(link);
   }, []);
 
-  // Fetch AI food suggestions from backend
+  // Get AI food suggestions
   async function suggestFood() {
     if (!text.trim()) return alert("Please describe your mood.");
     setLoading(true);
@@ -38,7 +38,7 @@ function Mood() {
     }
   }
 
-  // Add dish to backend cart
+  // Add item to backend cart
   async function addToCart(dish) {
     try {
       const res = await fetch(`${API_URL}/api/cart`, {
@@ -48,16 +48,13 @@ function Mood() {
           dish_id: dish.id,
           name: dish.name,
           image: dish.image,
-          price: dish.price || 100,
+          price: dish.price,
           quantity: 1,
         }),
       });
+      if (!res.ok) throw new Error("Failed to add to cart");
       const data = await res.json();
-      if (res.ok) {
-        alert(`${dish.name} added to cart`);
-      } else {
-        alert(data.error || "Failed to add to cart");
-      }
+      alert(`${dish.name} added to cart`);
     } catch (e) {
       alert(e.message);
     }
@@ -83,9 +80,7 @@ function Mood() {
       <div id="suggested" className="cards">
         {loading && <p>Loading...</p>}
         {!loading && dishes.length === 0 && (
-          <p style={{ opacity: 0.7 }}>
-            No suggestions yet. Try describing your mood.
-          </p>
+          <p style={{ opacity: 0.7 }}>No suggestions yet. Try describing your mood.</p>
         )}
         {dishes.map((dish) => (
           <div key={dish.id || dish.name} className="card ai">
@@ -98,7 +93,6 @@ function Mood() {
         ))}
       </div>
 
-      {/* Go to cart page */}
       <button className="cart-btn" onClick={() => navigate("/cart")}>
         🛒
       </button>

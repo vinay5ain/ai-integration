@@ -54,7 +54,6 @@ function Cart() {
         body: JSON.stringify({ quantity: newQty }),
       });
       if (!res.ok) throw new Error("Failed to update quantity");
-      const data = await res.json();
       setItems(items.map((it) => (it.id === id ? { ...it, quantity: newQty } : it)));
     } catch (e) {
       alert(e.message);
