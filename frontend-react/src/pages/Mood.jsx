@@ -9,7 +9,7 @@ function Mood() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Load only mood.css
+  // Load mood.css dynamically
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -18,7 +18,7 @@ function Mood() {
     return () => document.head.removeChild(link);
   }, []);
 
-  // Get AI food suggestions
+  // Fetch AI food suggestions from backend
   async function suggestFood() {
     if (!text.trim()) return alert("Please describe your mood.");
     setLoading(true);
@@ -38,27 +38,29 @@ function Mood() {
     }
   }
 
-  // Add item to cart (with fallback values if API doesn’t send all fields)
-  function addToCart(dish) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    console.log("Cart before:", cart);
-
-    const existing = cart.find((item) => item.id === dish.id);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cart.push({
-        id: dish.id || Date.now(), // fallback if no id provided
-        name: dish.name || "Unknown Dish",
-        image: dish.image || "/placeholder.png",
-        price: dish.price || 100, // fallback price
-        quantity: 1,
+  // Add dish to backend cart
+  async function addToCart(dish) {
+    try {
+      const res = await fetch(`${API_URL}/api/cart`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dish_id: dish.id,
+          name: dish.name,
+          image: dish.image,
+          price: dish.price || 100,
+          quantity: 1,
+        }),
       });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`${dish.name} added to cart`);
+      } else {
+        alert(data.error || "Failed to add to cart");
+      }
+    } catch (e) {
+      alert(e.message);
     }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    console.log("Cart after:", JSON.parse(localStorage.getItem("cart")));
-    alert(`${dish.name || "Dish"} added to cart`);
   }
 
   return (
