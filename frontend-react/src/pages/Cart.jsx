@@ -9,13 +9,11 @@ function Cart() {
     link.rel = "stylesheet";
     link.href = "/css/cart.css";
     document.head.appendChild(link);
-
     return () => {
       document.head.removeChild(link);
     };
   }, []);
 
-  // Load cart from localStorage
   function loadCart() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     setItems(cart);
@@ -31,16 +29,27 @@ function Cart() {
     setItems(newCart);
   }
 
+  function updateQuantity(id, change) {
+    const newCart = items.map((item) =>
+      item.id === id
+        ? { ...item, quantity: Math.max(1, item.quantity + change) }
+        : item
+    );
+    localStorage.setItem("cart", JSON.stringify(newCart));
+    setItems(newCart);
+  }
+
   async function checkout() {
     if (items.length === 0) {
       alert("Cart is empty.");
       return;
     }
 
-    // Total amount in INR
-    const amount = items.reduce((sum, item) => sum + (item.price || 100), 0); // default 100 if no price
+    const amount = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
 
-    // Create Razorpay order via backend
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
     const orderRes = await fetch(`${API_URL}/api/create_order`, {
       method: "POST",
@@ -58,7 +67,6 @@ function Cart() {
       description: "Order Payment",
       order_id: orderData.id,
       handler: async function (response) {
-        // Verify payment on backend
         const verifyRes = await fetch(`${API_URL}/api/verify_payment`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -76,7 +84,6 @@ function Cart() {
       theme: { color: "#4a90e2" },
     };
 
-    // Razorpay SDK must be included in public/index.html
     const rzp = new window.Razorpay(options);
     rzp.open();
   }
@@ -90,15 +97,25 @@ function Cart() {
         ) : (
           items.map((item) => (
             <li key={item.id}>
-              {item.name} - ₹{item.price || 100}
+              <img
+                src={item.image}
+                alt={item.name}
+                style={{ width: "50px", marginRight: "8px" }}
+              />
+              {item.name} - ₹{item.price} x {item.quantity} = ₹
+              {item.price * item.quantity}
+              <button onClick={() => updateQuantity(item.id, -1)}>-</button>
+              <button onClick={() => updateQuantity(item.id, 1)}>+</button>
               <button onClick={() => removeItem(item.id)}>Remove</button>
             </li>
           ))
         )}
       </ul>
-      <button id="checkoutBtn" onClick={checkout}>
-        Checkout
-      </button>
+      {items.length > 0 && (
+        <button id="checkoutBtn" onClick={checkout}>
+          Checkout
+        </button>
+      )}
     </section>
   );
 }
