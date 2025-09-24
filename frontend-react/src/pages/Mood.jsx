@@ -18,6 +18,7 @@ function Mood() {
     return () => document.head.removeChild(link);
   }, []);
 
+  // Get AI food suggestions
   async function suggestFood() {
     if (!text.trim()) return alert("Please describe your mood.");
     setLoading(true);
@@ -37,25 +38,27 @@ function Mood() {
     }
   }
 
+  // Add item to cart (with fallback values if API doesn’t send all fields)
   function addToCart(dish) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log("Cart before:", cart);
 
     const existing = cart.find((item) => item.id === dish.id);
     if (existing) {
       existing.quantity += 1;
     } else {
-      // ✅ Ensure consistent structure
       cart.push({
-        id: dish.id,
-        name: dish.name,
-        image: dish.image,
-        price: dish.price || 100, // fallback if API doesn’t return price
+        id: dish.id || Date.now(), // fallback if no id provided
+        name: dish.name || "Unknown Dish",
+        image: dish.image || "/placeholder.png",
+        price: dish.price || 100, // fallback price
         quantity: 1,
       });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert(`${dish.name} added to cart`);
+    console.log("Cart after:", JSON.parse(localStorage.getItem("cart")));
+    alert(`${dish.name || "Dish"} added to cart`);
   }
 
   return (
@@ -83,8 +86,8 @@ function Mood() {
           </p>
         )}
         {dishes.map((dish) => (
-          <div key={dish.id} className="card ai">
-            <img src={dish.image} alt={dish.name} />
+          <div key={dish.id || dish.name} className="card ai">
+            <img src={dish.image || "/placeholder.png"} alt={dish.name} />
             <h3>{dish.name}</h3>
             <p>{dish.description}</p>
             <p>₹{dish.price || 100}</p>
