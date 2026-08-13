@@ -1,95 +1,97 @@
 # FoodMood AI (ai-integration)
 
-A small full-stack demo that suggests foods based on user mood using a Hugging Face emotion model, with a React frontend and a Flask backend (includes Razorpay payment integration for ordering).
+A small full‑stack demo that suggests foods based on user mood using a Hugging Face emotion model, with a Vite + React frontend and a Flask backend. Includes a simple Razorpay payment flow and static JSON datasets for food metadata.
 
 ## Overview
-FoodMood AI accepts short user text (how they feel) and returns food suggestions mapped to detected moods. It demonstrates simple AI integration (Hugging Face inference), a Vite + React frontend, a Flask API backend, use of static JSON datasets for dishes and mappings, and a basic Razorpay payment flow (order creation + signature verification).
+FoodMood AI accepts short user text describing mood and returns food suggestions mapped to detected emotions. It was built to demonstrate integrating a model inference API into a full‑stack web flow, mapping AI outputs to domain data, and wiring a minimal ordering/payment flow. The app is suitable as a learning/demo project for developers and recruiters evaluating full‑stack skills.
 
-## Features (implemented)
-- Mood inference via Hugging Face model (SamLowe/roberta-base-go_emotions) from user text.
-- Mapping moods → tastes → candidate foods using local JSON mappings (foods.json).
-- Food metadata served from dishes.json and returned as recommendations.
-- In-memory cart: add, view, remove items (no persistent DB).
-- Razorpay order creation and payment verification endpoint (uses Razorpay Python SDK + HMAC verification).
-- Single-page React frontend (Vite) served from frontend-react/dist by Flask.
-- Health check endpoint (`/ping`).
+## Key facts (what the project actually does)
+- Accepts user text and infers emotions via a Hugging Face model (SamLowe/roberta-base-go_emotions).
+- Maps inferred moods → tastes → candidate foods using local JSON mappings (foods.json) and looks up dish metadata in dishes.json.
+- Provides a simple in‑memory cart and ordering flow; order creation and signature verification use Razorpay APIs.
+- Serves a Vite + React frontend build from Flask (static files in frontend-react/dist when built).
 
-## Tech Stack
+## Key Features (implemented)
+- POST /api/suggest: infer moods and return recommended dishes.
+- In‑memory cart: add, view, remove items (no persistent database; server memory only).
+- Razorpay order creation (`/api/create_order`) and HMAC signature verification (`/api/verify_payment`).
+- React SPA (Vite) with pages for Home, Mood (AI input), and Cart.
+- Health check endpoint `/ping`.
+
+## Tech Stack (actual)
 - Frontend: React (Vite), react-router-dom
-- Backend: Python 3.x, Flask, Flask-Cors
-- HTTP client / AI: requests, Hugging Face Inference API
-- Payments: razorpay Python SDK (Razorpay order creation & HMAC verification)
-- Packaging / tooling: pip / requirements.txt, npm (frontend)
-- Deployment hint: render.yml is present (suggests Render service configuration)
+- Backend: Python, Flask, Flask-Cors
+- AI/ML: Hugging Face Inference API (requests used to call the HF endpoint)
+- Payments: razorpay Python SDK and frontend Razorpay widget
+- Packaging / tooling: pip (requirements.txt), npm (frontend package.json), gunicorn listed in requirements
 
 ## How it works (workflow)
-1. Frontend collects user text describing mood and posts to backend `/api/suggest`.
-2. Backend uses the Hugging Face inference endpoint to infer top moods for the text (cached with lru_cache).
-3. Backend maps moods → tastes → foods via local foods.json, finds matching dishes in dishes.json, and returns a limited list of recommendations.
-4. User can add dishes to an in-memory cart via `/api/cart` (POST/DELETE) and view it (GET).
-5. For checkout, frontend can call `/api/create_order` (server creates an order via Razorpay) and after payment the frontend calls `/api/verify_payment` to verify payment signature; successful verification records an in-memory order and clears the cart.
+1. User types a mood phrase in the React UI (/mood).
+2. Frontend POSTs { text } to backend `/api/suggest`.
+3. Backend calls the Hugging Face inference API, caches results (lru_cache), maps mood labels to tastes and foods, and returns dish objects.
+4. User adds dishes to cart; cart data is stored in the server process memory and returned by `/api/cart`.
+5. Checkout calls `/api/create_order` (server-side Razorpay order creation). After client-side payment, the frontend sends Razorpay response to `/api/verify_payment` which verifies the HMAC signature and records the order in memory.
 
 ## Architecture
-- Single Flask process serves REST API endpoints and static files (build output from React at frontend-react/dist).
-- No external persistent database: data is loaded from dishes.json and foods.json; carts and orders are stored in-memory (server lifetime only).
-- External services:
-  - Hugging Face model inference (HF API) for emotion detection.
-  - Razorpay API for order creation and payment flow.
+- Single Flask app provides REST endpoints and serves frontend static files (expects built files in frontend-react/dist).
+- No persistent storage: dishes and mappings are read from JSON files; CART and ORDERS are Python lists in memory.
+- External dependencies: Hugging Face Inference API for emotion detection; Razorpay for payments.
 
 ## Project structure (important files)
 ```
-README.md                         # (this file)
-app.py                            # Flask backend, API routes, frontend-serving logic
-requirements.txt                  # Python dependencies
-dishes.json                       # Dish metadata used for recommendations
-foods.json                        # mood->taste and taste->food mappings
-render.yml                        # deployment configuration (Render)
-frontend-react/                   # React (Vite) frontend source + package.json
+README.md
+app.py                    # Flask app, routes, HF + Razorpay integration
+requirements.txt          # Python dependencies
+dishes.json               # dish metadata used for recommendations
+foods.json                # mood->taste and taste->food mappings
+render.yml                # Render configuration present in repo
+frontend-react/           # React (Vite) frontend
   package.json
   src/
     App.jsx
     main.jsx
     pages/
+      Home.jsx
+      Mood.jsx
+      Cart.jsx
     assets/
   index.html
-  .env (may contain local dev overrides)
+  .env                    # contains VITE_API_URL (points to a configured deployment URL)
 ```
 
 ## Installation (local development)
-Backend (Python):
-```bash
-# create a virtual environment
-python -m venv venv
-# activate it (Linux/macOS)
-source venv/bin/activate
-# on Windows (PowerShell)
-# .\venv\Scripts\Activate.ps1
+Clone and prepare backend:
 
+```bash
+git clone https://github.com/vinay5ain/ai-integration.git
+cd ai-integration
+python -m venv venv
+# activate the venv (Linux/macOS)
+source venv/bin/activate
+# on Windows PowerShell: .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-Frontend (React / Vite):
+Frontend (dev or build):
+
 ```bash
 cd frontend-react
 npm install
-# For development frontend only:
+# dev server (frontend only)
 npm run dev
-
-# To build static assets served by Flask:
+# build static assets for Flask to serve
 npm run build
-# This generates frontend-react/dist which Flask serves.
+# this creates frontend-react/dist
 ```
 
-Run backend (after installing Python deps and building frontend if you want the UI served):
-```bash
-# from project root
-# set required environment variables (example below)
-export HF_API_KEY="..."                 # Hugging Face API key (required)
-export RAZORPAY_KEY_ID="..."            # Razorpay key id (required for order creation)
-export RAZORPAY_KEY_SECRET="..."        # Razorpay key secret (required for signature verification)
-# optional
-export PORT=5000
+Run backend (after setting env vars and optionally building frontend):
 
+```bash
+# from repo root
+export HF_API_KEY="..."
+export RAZORPAY_KEY_ID="..."
+export RAZORPAY_KEY_SECRET="..."
+export PORT=5000  # optional
 python app.py
 ```
 
@@ -98,68 +100,72 @@ python app.py
 - RAZORPAY_KEY_ID
 - RAZORPAY_KEY_SECRET
 - PORT (optional)
+- Frontend: VITE_API_URL (see frontend-react/.env)
 
-Do not store secrets in the repo. Verify any .env files are excluded from commits.
+Do not add secrets to the repository. Use a local .env (excluded) or secret manager for deployments.
 
-## API Documentation (based on app.py)
+## API Documentation (based strictly on app.py)
 - POST /api/suggest
-  - Input JSON: { "text": "I feel ... " }
-  - Output JSON: { "moods": [{ "label": "sad", "confidence": 0.92 }, ...], "dishes": [ { dish object }, ... ] }
-  - Errors: 400 if text missing, 500 for model errors.
+  - Request: JSON { "text": "..." }
+  - Response: { "moods": [{label, confidence}], "dishes": [dish, ...] }
+  - Errors: 400 if text missing; 500 for external model errors.
 
 - GET /api/cart
-  - Returns: current in-memory cart array (list of dish objects)
+  - Response: Array of dish objects currently in server memory.
 
 - POST /api/cart
-  - Input JSON: { "id": "<dish_id>" }
-  - Adds dish to cart; returns { "message": "added", "cart": [...] }
+  - Request: JSON { "id": "<dish_id>" }
+  - Response: { "message": "added", "cart": [...] }
+  - Notes: app.py expects the key `id` (dish id) when adding.
 
 - DELETE /api/cart
-  - Input JSON: { "id": "<dish_id>" }
-  - Removes dish(s) with the id from cart; returns { "message": "removed", "cart": [...] }
+  - Request: JSON { "id": "<dish_id>" }
+  - Response: { "message": "removed", "cart": [...] }
 
 - POST /api/create_order
-  - Input JSON: { "amount": <number> }  # amount in INR (float)
-  - Creates a Razorpay order via SDK and returns order object from Razorpay.
-  - Note: server converts amount to paise (amount * 100).
+  - Request: JSON { "amount": <number> }  # amount in INR (float)
+  - Response: Razorpay order object
 
 - POST /api/verify_payment
-  - Input JSON: {
-      "razorpay_order_id": "...",
-      "razorpay_payment_id": "...",
-      "razorpay_signature": "..."
-    }
-  - Verifies signature using RAZORPAY_KEY_SECRET; on success appends to in-memory ORDERS and clears CART.
-  - Response: { "status": "success", "message": ... } or 400 on verification failure.
+  - Request: JSON with razorpay_order_id, razorpay_payment_id, razorpay_signature
+  - Behavior: verifies HMAC using RAZORPAY_KEY_SECRET, on success records order and clears cart
 
 - GET /ping
-  - Health check, returns { "status": "ok" }
+  - Response: { "status": "ok" }
+
+Note: The frontend code (frontend-react/src/pages) contains calls to endpoints with slightly different shapes and routes (see "Notes & known mismatches" below).
 
 ## Screenshots / Demo
-No demo URLs or screenshots are present in the repository. The README does not invent or claim any deployment URL. The repository contains a render.yml (possible deployment target) but no published URL in code.
+- frontend-react/.env contains VITE_API_URL=https://ai-integration-vtev.onrender.com — this indicates the frontend was configured to use that host. The repo does not contain hosted screenshots. I did not verify external availability; the URL came from repository files.
 
-## Challenges & Learning
-This project demonstrates:
-- Integrating a third-party model inference API (Hugging Face) and handling API responses and errors.
-- Caching repeated inference calls with functools.lru_cache for simple performance improvement.
-- Mapping AI outputs (emotion labels) to application-domain data (tastes → foods).
-- Building a simple full-stack workflow: React frontend (Vite) → Flask backend → external services (HF, Razorpay).
-- Payment verification using HMAC signature verification and using the Razorpay SDK.
+## Notes & known mismatches (important)
+While inspecting code I observed some mismatches between frontend expectations and backend implementation:
+- Frontend Mood.jsx sends POST /api/cart with a body containing keys { dish_id, name, image, price, quantity } while backend /api/cart expects JSON with key `id` only. This means adding items from the UI to the backend cart may not work without aligning the request shape.
+- Cart.jsx uses fetch to `/api/cart/${id}` with PUT and DELETE to update/remove items by path parameter — these path-based routes are not implemented in app.py (app.py uses /api/cart without path parameters). Frontend and backend routes should be aligned.
 
-## Future improvements (realistic suggestions)
-- Persist carts and orders in a database (SQLite/Postgres/MongoDB) to survive restarts.
-- Add user authentication and per-user carts/orders.
-- Improve model robustness: handle rate limits, retries, and fallbacks if HF API is unavailable.
-- Add server-side input validation and stricter error handling.
-- Add unit/integration tests for backend and frontend.
-- Move sensitive configuration to environment variables and provide a .env.example (without secrets).
-- Add CI pipeline and linting checks for Python and JavaScript.
+These are code-level inconsistencies present in the current repository and should be resolved before assuming the full end-to-end flow works as intended.
 
-## What this project demonstrates (for recruiters)
-- Full-stack development (React frontend + Flask backend)
-- API integration with external services (Hugging Face, Razorpay)
-- Practical skills in Python, JavaScript, React, HTTP APIs, state management and basic security practice (signature verification)
-- Ability to wire a simple product flow from input → model → mapped business logic → payment
+## Challenges & Learning (what this project demonstrates)
+- Integrating 3rd-party model inference APIs and handling non-deterministic outputs and errors.
+- Caching AI responses (functools.lru_cache) to reduce repeated inference calls.
+- Mapping model outputs to domain-specific recommendations using local datasets.
+- Basic payment integration and HMAC signature verification.
+- Organizing a small full-stack project with a Vite React frontend and Flask backend.
+
+## Future improvements (realistic, not implemented)
+- Fix API contract mismatches between frontend and backend (request shapes and route paths).
+- Persist carts and orders in a database (SQLite/Postgres/MongoDB) with per‑user data.
+- Add user authentication and authorization for orders.
+- Add tests (unit and integration) for backend endpoints and frontend components.
+- Improve error handling and implement retries/timeout handling for HF API calls.
+- Add a .env.example (no secrets) and document deployment steps (Render, Heroku, etc.).
+
+## What this project demonstrates for my profile
+- Full-stack development: React (frontend) + Flask (backend)
+- Working with external APIs (Hugging Face inference, Razorpay)
+- Backend API design and simple state management
+- Ability to read, analyze and connect frontend-backend code (debugging and integration)
 
 ## Author
-Repository owner: vinay5ain (GitHub account used for this repository)
+Repository owner: vinay5ain
+
